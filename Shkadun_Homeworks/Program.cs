@@ -7,7 +7,7 @@ namespace Shkadun_Princess
     {
         static void Main(string[] args)
         {
-            ConsoleWriteAndRead cwar = new ConsoleWriteAndRead();
+            WorkWithConsole workWithConsole = new WorkWithConsole();
             Player player = new Player();
             Map map = new Map();
 
@@ -28,14 +28,14 @@ namespace Shkadun_Princess
                     case ConsoleKey.LeftArrow: player.PlayerRunLeft(map); break;
                     default: break;
                 }
-                if (player.Hp < 0)
+                if (player.HP <= 0)
                 {
-                    if (cwar.GameOver(1) == 0) { break; }
+                    if (workWithConsole.GameOver(1) == 0) { break; }
                     map.StartNewGame(player);
                 }
-                else if (player.Hp > 10)
+                else if (player.HP > 10)
                 {
-                    if (cwar.GameOver(0) == 0) { break; }
+                    if (workWithConsole.GameOver(0) == 0) { break; }
                     map.StartNewGame(player);
                 }
                 Thread.Sleep(200);

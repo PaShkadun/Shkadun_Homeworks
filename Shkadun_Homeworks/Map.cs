@@ -5,9 +5,9 @@ namespace Shkadun_Princess
     class Map
     {
         object[][] cell;            //карта
-        ConsoleWriteAndRead cwar;   //Объект класса для консольного ввода-вывода сообщений
+        WorkWithConsole workWithConsole;   //Объект класса для консольного ввода-вывода сообщений
 
-        //Создание карты
+        //Создание игры
         public void StartNewGame(Player player)
         {
             cell = null;
@@ -44,13 +44,13 @@ namespace Shkadun_Princess
         {
             Mine mine = new Mine(0);
             //Если юзер на клетке 9-9 - победа
-            if (player.PlayerX == 9 && player.PlayerY == 9) { player.setHpWin(); return 0; }
+            if (player.PlayerPositionHorizontal == 9 && player.PlayerPositionVertical == 9) { player.SetHpWin(); return 0; }
             //Если клетка пустая, то ничего не происходит
-            if (cell[player.PlayerX][player.PlayerY] == null) { return 0; }
+            if (cell[player.PlayerPositionHorizontal][player.PlayerPositionVertical] == null) { return 0; }
             //Если на клетке мина
-            if (cell[player.PlayerX][player.PlayerY].GetType() == mine.GetType())
+            if (cell[player.PlayerPositionHorizontal][player.PlayerPositionVertical].GetType() == mine.GetType())
             {
-                mine = (Mine)cell[player.PlayerX][player.PlayerY];
+                mine = (Mine)cell[player.PlayerPositionHorizontal][player.PlayerPositionVertical];
                 if (mine.Status == "Active") { mine.InactiveMine(); return mine.Damage; } //Если активная, снимает HP
                 else { return 0; }
             }
@@ -62,28 +62,28 @@ namespace Shkadun_Princess
         {
             Mine mine = new Mine(0);
             Console.Clear();
-            cwar.WriteGameName();   //Выводит название игры
-            cwar.WriteHP(player);   //Выводит HP юзера
+            workWithConsole.WriteGameName();   //Выводит название игры
+            workWithConsole.WriteHP(player);   //Выводит HP юзера
             for (int i = 0; i < cell.Length; i++)
             {
-                cwar.DrowLine(i);   //Рисует разделительную полосу(--------)
+                workWithConsole.DrowLine(i);   //Рисует разделительную полосу(--------)
                 for (int o = 0; o < cell[i].Length; o++)
                 {
                     //Если положение юзера, выводим Y
-                    if (i == player.PlayerX && o == player.PlayerY) { cwar.DrowPlayer(); }
+                    if (i == player.PlayerPositionHorizontal && o == player.PlayerPositionVertical) { workWithConsole.DrowPlayer(); }
                     //Если пустая, то пустую ячейку
-                    else if (cell[i][o] == null) { cwar.DrowEmptyCell(); }
+                    else if (cell[i][o] == null) { workWithConsole.DrowEmptyCell(); }
                     //Если мина, то проверяем её статус
-                    else if (cell[i][o].GetType() == mine.GetType()) { cwar.DrowMineCell((Mine)cell[i][o]); }
+                    else if (cell[i][o].GetType() == mine.GetType()) { workWithConsole.DrowMineCell((Mine)cell[i][o]); }
                 }
                 Console.WriteLine();
             }
-            cwar.DrowLine(10);
+            workWithConsole.DrowLine(10);
         }
 
         public Map()
         {
-            cwar = new ConsoleWriteAndRead();
+            workWithConsole = new WorkWithConsole();
             cell = new object[10][];
             for (int i = 0; i < 10; i++)
             {

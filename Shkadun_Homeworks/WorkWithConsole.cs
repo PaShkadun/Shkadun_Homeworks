@@ -2,13 +2,15 @@
 
 namespace Shkadun_Princess
 {
-    class ConsoleWriteAndRead
+    class WorkWithConsole
     {
         public int GameOver(int result)
         {
             if (result == 0) { Console.WriteLine("Вы выиграли."); }
             else { Console.WriteLine("Вы проиграли. Ещё раз?"); }
+
             Console.WriteLine("Ещё раз? y/n");
+
             if (Console.ReadLine() == "y") { return 1; }
             else { return 0; }
         }
@@ -16,6 +18,7 @@ namespace Shkadun_Princess
         public void DrowLine(int line)
         {
             Console.WriteLine("----------------------");
+
             if (line < 10) { Console.Write("|"); }
         }
 
@@ -37,7 +40,7 @@ namespace Shkadun_Princess
 
         public void WriteHP(Player player)
         {
-            Console.WriteLine($"HP {player.Hp}");
+            Console.WriteLine($"HP {player.HP}");
         }
 
         public void WriteGameName()
