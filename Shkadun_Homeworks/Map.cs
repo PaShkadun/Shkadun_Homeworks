@@ -1,93 +1,157 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Shkadun_Princess
 {
-    class Map
+    public class Map
     {
-        object[][] cell;            //карта
-        WorkWithConsole workWithConsole;   //Объект класса для консольного ввода-вывода сообщений
+        // Массив ячеек
+        string[][] gameField;
+        // Объект класса для консольного ввода-вывода сообщений
+        ConsoleWork consoleWrok;   
+        private int CountMines = 10;
+        public int FieldVertical { get; private set; }
+        public int FieldHorizontal { get; private set; }
+        private List<Mine> ListMines;
 
-        //Создание игры
+        // Создание игры
         public void StartNewGame(Player player)
         {
-            cell = null;
-            cell = new object[10][];
-            for (int i = 0; i < 10; i++)
+            gameField = null;
+            gameField = new string[10][];
+            for (int i = 0; i < FieldHorizontal; i++)
             {
-                cell[i] = new object[10];
+                gameField[i] = new string[10];
             }
-            player.StartPlayerPosition();   //Ставит юзера на клетку 0-0
-            GenerationMines();              //Генерирует мины
-            DrowMap(player);                //Рисует карту, игрока на поле, мины(взорванные)
+            // Ставит юзера на клетку 0-0
+            player.StartPlayerPosition();
+            // Генерирует мины
+            GenerationMines();
+            // Рисует карту, игрока на поле, мины(взорванные)
+            DrowMap(player);                
         }
 
-        //Генерация мин
+        // Генерация мин
         public void GenerationMines()
         {
             Random random = new Random();
-            int[] position = new int[10];
+
+            int[] positionMines = new int[10];
             int damage;
-            for (int i = 0; i < 10; i++)
+
+            for (int i = 0; i < CountMines; i++)
             {
-                position[i] = random.Next(1, 99);
+                positionMines[i] = random.Next(1, 99);
+
                 for (int o = 0; o < i; o++)
                 {
-                    if (position[i] == position[o]) { i--; }
+                    if (positionMines[i] == positionMines[o]) 
+                    { 
+                        i--; 
+                    }
                 }
+
                 damage = random.Next(1, 10);
-                cell[position[i] / 10][position[i] % 10] = new Mine(damage);    //Положение мины
+                // Положение мины
+                gameField[positionMines[i] / 10][positionMines[i] % 10] = "Mine";    
+                ListMines.Add(new Mine(damage, positionMines[i] / 10, positionMines[i] % 10));
             }
         }
 
-        //Проверка мины на клетке, на которую стал юзер
+        // Проверка мины на клетке, на которую стал юзер
         public int CheckMine(Player player)
         {
-            Mine mine = new Mine(0);
-            //Если юзер на клетке 9-9 - победа
-            if (player.PlayerPositionHorizontal == 9 && player.PlayerPositionVertical == 9) { player.SetHpWin(); return 0; }
-            //Если клетка пустая, то ничего не происходит
-            if (cell[player.PlayerPositionHorizontal][player.PlayerPositionVertical] == null) { return 0; }
-            //Если на клетке мина
-            if (cell[player.PlayerPositionHorizontal][player.PlayerPositionVertical].GetType() == mine.GetType())
-            {
-                mine = (Mine)cell[player.PlayerPositionHorizontal][player.PlayerPositionVertical];
-                if (mine.Status == "Active") { mine.InactiveMine(); return mine.Damage; } //Если активная, снимает HP
-                else { return 0; }
+            // Если юзер на клетке 9-9 - победа
+            if ((player.PlayerPositionHorizontal == FieldHorizontal - 1) && 
+                (player.PlayerPositionVertical == FieldVertical - 1)) 
+            { 
+                player.SetHpWin(); 
+                return 0; 
             }
-            else { return 0; }
+
+            // Если клетка пустая, то ничего не происходит
+            if (gameField[player.PlayerPositionVertical][player.PlayerPositionHorizontal] == null) 
+            { 
+                return 0;
+            }
+
+            // Если на клетке мина
+            if (gameField[player.PlayerPositionVertical][player.PlayerPositionHorizontal] == "Mine")
+            {
+                foreach(Mine mine in ListMines)
+                {
+                    if ((mine.PositionHorizontal == player.PlayerPositionHorizontal) &&
+                        (mine.PositionVertical == player.PlayerPositionVertical))
+                    {
+                        if(mine.Status == "Active")
+                        {
+                            mine.InactiveMine();
+
+                            return mine.Damage;
+                        }
+                    }
+                }
+
+                return 0; 
+            }
+            else 
+            { 
+                return 0; 
+            }
         }
 
-        //Рисует карту
+        // Рисует карту
         public void DrowMap(Player player)
         {
-            Mine mine = new Mine(0);
             Console.Clear();
-            workWithConsole.WriteGameName();   //Выводит название игры
-            workWithConsole.WriteHP(player);   //Выводит HP юзера
-            for (int i = 0; i < cell.Length; i++)
+            // Выводит HP юзера и название игры
+            consoleWrok.WriteGameInfo(player);   
+
+            for (int i = 0; i < FieldVertical; i++)
             {
-                workWithConsole.DrowLine(i);   //Рисует разделительную полосу(--------)
-                for (int o = 0; o < cell[i].Length; o++)
+                // Рисует разделительную полосу(--------)
+                consoleWrok.DrowLine(i);   
+                for (int o = 0; o < FieldHorizontal; o++)
                 {
-                    //Если положение юзера, выводим Y
-                    if (i == player.PlayerPositionHorizontal && o == player.PlayerPositionVertical) { workWithConsole.DrowPlayer(); }
-                    //Если пустая, то пустую ячейку
-                    else if (cell[i][o] == null) { workWithConsole.DrowEmptyCell(); }
-                    //Если мина, то проверяем её статус
-                    else if (cell[i][o].GetType() == mine.GetType()) { workWithConsole.DrowMineCell((Mine)cell[i][o]); }
+                    // Если положение юзера, выводим P
+                    if (i == player.PlayerPositionVertical && o == player.PlayerPositionHorizontal) 
+                    { 
+                        consoleWrok.DrowCell("Player"); 
+                    }
+
+                    // Если пустая, то пустую ячейку
+                    else if (gameField[i][o] == null) 
+                    {
+                        consoleWrok.DrowCell("Empty"); 
+                    }
+
+                    // Если мина, то проверяем её статус
+                    else if (gameField[i][o] == "Mine") 
+                    { 
+                        foreach(Mine mine in ListMines)
+                        {
+                            if(mine.PositionVertical == i && mine.PositionHorizontal == o)
+                            {
+                                consoleWrok.DrowCell("Mine", mine);
+                                break;
+                            }
+                        }
+                    }
                 }
                 Console.WriteLine();
             }
-            workWithConsole.DrowLine(10);
         }
 
         public Map()
         {
-            workWithConsole = new WorkWithConsole();
-            cell = new object[10][];
+            consoleWrok = new ConsoleWork();
+            ListMines = new List<Mine>();
+            FieldHorizontal = 10;
+            FieldVertical = 10;
+            gameField = new string[10][];
             for (int i = 0; i < 10; i++)
             {
-                cell[i] = new object[10];
+                gameField[i] = new string[10];
             }
         }
     }

@@ -3,11 +3,11 @@ using System.Threading;
 
 namespace Shkadun_Princess
 {
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
-            WorkWithConsole workWithConsole = new WorkWithConsole();
+            ConsoleWork consoleWrok = new ConsoleWork();
             Player player = new Player();
             Map map = new Map();
 
@@ -30,12 +30,12 @@ namespace Shkadun_Princess
                 }
                 if (player.HP <= 0)
                 {
-                    if (workWithConsole.GameOver(1) == 0) { break; }
+                    if (consoleWrok.GameOver(1) == "new game") { break; }
                     map.StartNewGame(player);
                 }
                 else if (player.HP > 10)
                 {
-                    if (workWithConsole.GameOver(0) == 0) { break; }
+                    if (consoleWrok.GameOver(0) == "exit") { break; }
                     map.StartNewGame(player);
                 }
                 Thread.Sleep(200);
