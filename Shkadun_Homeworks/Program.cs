@@ -7,38 +7,55 @@ namespace Shkadun_Princess
     {
         static void Main(string[] args)
         {
-            ConsoleWork consoleWrok = new ConsoleWork();
+            ConsoleWork consoleWork = new ConsoleWork();
             Player player = new Player();
-            Map map = new Map();
+            Game game = new Game();
 
-            map.GenerationMines();
-            map.DrowMap(player);
+            game.GenerationBombCells();
+            game.DrowMap(player);
 
-            while (true)
+            bool inGame = true;
+
+            while (inGame)
             {
                 switch (Console.ReadKey(true).Key)
                 {
                     case ConsoleKey.W:
-                    case ConsoleKey.UpArrow: player.PlayerRunUp(map); break;
+                    case ConsoleKey.UpArrow: 
+                        player.Move(game, vertical: -1); 
+                        break;
+
                     case ConsoleKey.S:
-                    case ConsoleKey.DownArrow: player.PlayerRunDown(map); break;
+                    case ConsoleKey.DownArrow: 
+                        player.Move(game, vertical: +1); 
+                        break;
+
                     case ConsoleKey.D:
-                    case ConsoleKey.RightArrow: player.PlayerRunRight(map); break;
+                    case ConsoleKey.RightArrow: 
+                        player.Move(game, horizontal: +1); 
+                        break;
+
                     case ConsoleKey.A:
-                    case ConsoleKey.LeftArrow: player.PlayerRunLeft(map); break;
+                    case ConsoleKey.LeftArrow: 
+                        player.Move(game, horizontal: -1); 
+                        break;
+
                     default: break;
                 }
-                if (player.HP <= 0)
+                if (player.GameOver != null)
                 {
-                    if (consoleWrok.GameOver(1) == "new game") { break; }
-                    map.StartNewGame(player);
+                    if (consoleWork.GameOver(player.GameOver) == "new game")
+                    {
+                        player = new Player();
+                        game = new Game();
+                        game.GenerationBombCells();
+                        game.DrowMap(player);
+                    }
+                    else
+                    {
+                        inGame = false;
+                    }
                 }
-                else if (player.HP > 10)
-                {
-                    if (consoleWrok.GameOver(0) == "exit") { break; }
-                    map.StartNewGame(player);
-                }
-                Thread.Sleep(200);
             }
         }
     }

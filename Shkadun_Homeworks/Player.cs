@@ -3,69 +3,45 @@ namespace Shkadun_Princess
 {
     public class Player
     {
+        private const int PLAYER_DEAD = 0;
         public int HP { get; private set; }
-        public int PlayerPositionHorizontal { get; private set; }
-        public int PlayerPositionVertical { get; private set; }
+        public int PositionHorizontal { get; private set; }
+        public int PositionVertical { get; private set; }
+        public string GameOver { get; set; }
 
-        //Для проверки победы. Если hp > 10, то в program выводит победу.
-        public void SetHpWin()
+        public void Move(Game game, int horizontal = 0, int vertical = 0)
         {
-            HP = 11;
-        }
+            // Если юзер находится на верхней ячейке
+            if((PositionHorizontal + horizontal) >= 0 && 
+               (PositionHorizontal + horizontal) <= (game.FieldHorizontal - 1))
+            {
+                PositionHorizontal += horizontal;
+            }
 
-        public void StartPlayerPosition()
-        {
-            PlayerPositionHorizontal = 0;
-            PlayerPositionVertical = 0;
-            HP = 10;
-        }
+            if((PositionVertical + vertical) >= 0 &&
+               (PositionVertical + vertical) <= (game.FieldVertical - 1))
+            {
+                PositionVertical += vertical;
+            }
 
-        public void PlayerRunUp(Map map)
-        {
-            //Если юзер находится на верхней ячейке
-            if (PlayerPositionVertical == 0) { return; }
+            // Проверяет, стал ли юзер на мину. 
+            int damage = game.CheckBomb(this);
+            // Если нет снимает 0 HP
+            HP -= damage;                     
 
-            PlayerPositionVertical -= 1;
-            int damage = map.CheckMine(this); //Проверяет, стал ли юзер на мину. Если нет
-            HP -= damage;                     //Снимает 0 HP
-            map.DrowMap(this);
-        }
-        public void PlayerRunDown(Map map)
-        {
-            //Если юзер находится на нижней клетке
-            if (PlayerPositionVertical == 9) { return; }
+            if(HP <= PLAYER_DEAD)
+            {
+                GameOver = "Lose";
+            }
 
-            PlayerPositionVertical += 1;
-            int damage = map.CheckMine(this); //Проверяет, стал ли юзер на мину. Если нет
-            HP -= damage;                     //Снимает 0 HP
-            map.DrowMap(this);
-        }
-        public void PlayerRunRight(Map map)
-        {
-            //Если юзер на правой ячейке
-            if (PlayerPositionHorizontal == 9) { return; }
-
-            PlayerPositionHorizontal += 1;
-            int damage = map.CheckMine(this); //Проверяет, стал ли юзер на мину. Если нет
-            HP -= damage;                     //Снимает 0 HP
-            map.DrowMap(this);
-        }
-        public void PlayerRunLeft(Map map)
-        {
-            //Если юзер на левой ячейке
-            if (PlayerPositionHorizontal == 0) { return; }
-
-            PlayerPositionHorizontal -= 1;
-            int damage = map.CheckMine(this); //Проверяет, стал ли юзер на мину. Если нет
-            HP -= damage;                     //Снимает 0 HP
-            map.DrowMap(this);
+            game.DrowMap(this);
         }
 
         public Player()
         {
             HP = 10;
-            PlayerPositionHorizontal = 0;
-            PlayerPositionVertical = 0;
+            PositionHorizontal = 0;
+            PositionVertical = 0;
         }
     }
 }

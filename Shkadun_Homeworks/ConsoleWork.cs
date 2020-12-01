@@ -9,9 +9,9 @@ namespace Shkadun_Princess
         private const string HORIZONT_LINE = "----------------------";
         private const string REPLAY_GAME = "Ещё раз? y - да, n - нет";
 
-        public string GameOver(int result)
+        public string GameOver(string result)
         {
-            if (result == 0) { Console.WriteLine("Вы выиграли."); }
+            if (result == "Win") { Console.WriteLine("Вы выиграли."); }
             else { Console.WriteLine("Вы проиграли."); }
 
             Console.WriteLine(REPLAY_GAME);
@@ -29,8 +29,8 @@ namespace Shkadun_Princess
         public void DrowCell(string contentCell, Mine mine = null)
         {
             if(contentCell == "Player") { Console.Write("P|"); }
-            else if(contentCell == "Mine" && mine.Status == "Active") { Console.Write("Z|"); }
-            else if (contentCell == "Mine" && mine.Status == "Inactive") { Console.Write("X|"); }
+            else if(contentCell == "Bomb" && mine.Status == "Active") { Console.Write(" |"); }
+            else if (contentCell == "Bomb" && mine.Status == "Inactive") { Console.Write("X|"); }
             else { Console.Write(" |"); }
         }
 

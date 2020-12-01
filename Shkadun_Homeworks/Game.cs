@@ -3,87 +3,75 @@ using System.Collections.Generic;
 
 namespace Shkadun_Princess
 {
-    public class Map
+    public class Game
     {
+        private const string WIN = "Win";
+        private const string BOMB = "Bomb";
+        private const string ACTIVE = "Active";
+        private const string PLAYER = "Player";
+
         // Массив ячеек
         string[][] gameField;
         // Объект класса для консольного ввода-вывода сообщений
         ConsoleWork consoleWrok;   
         private int CountMines = 10;
-        public int FieldVertical { get; private set; }
-        public int FieldHorizontal { get; private set; }
+        public int FieldVertical { get; private set; } = 10;
+        public int FieldHorizontal { get; private set; } = 10;
         private List<Mine> ListMines;
 
-        // Создание игры
-        public void StartNewGame(Player player)
-        {
-            gameField = null;
-            gameField = new string[10][];
-            for (int i = 0; i < FieldHorizontal; i++)
-            {
-                gameField[i] = new string[10];
-            }
-            // Ставит юзера на клетку 0-0
-            player.StartPlayerPosition();
-            // Генерирует мины
-            GenerationMines();
-            // Рисует карту, игрока на поле, мины(взорванные)
-            DrowMap(player);                
-        }
-
         // Генерация мин
-        public void GenerationMines()
+        public void GenerationBombCells()
         {
             Random random = new Random();
 
             int[] positionMines = new int[10];
             int damage;
 
-            for (int i = 0; i < CountMines; i++)
+            for (int generationMine = 0; generationMine < CountMines; generationMine++)
             {
-                positionMines[i] = random.Next(1, 99);
+                positionMines[generationMine] = random.Next(1, (FieldVertical * FieldHorizontal - 1));
 
-                for (int o = 0; o < i; o++)
+                for (int mine = 0; mine < generationMine; mine++)
                 {
-                    if (positionMines[i] == positionMines[o]) 
+                    if (positionMines[mine] == positionMines[generationMine]) 
                     { 
-                        i--; 
+                        generationMine--; 
                     }
                 }
 
                 damage = random.Next(1, 10);
                 // Положение мины
-                gameField[positionMines[i] / 10][positionMines[i] % 10] = "Mine";    
-                ListMines.Add(new Mine(damage, positionMines[i] / 10, positionMines[i] % 10));
+                gameField[positionMines[generationMine] / 10][positionMines[generationMine] % 10] = BOMB;    
+                ListMines.Add(new Mine(damage, positionMines[generationMine] / 10, positionMines[generationMine] % 10));
             }
         }
 
         // Проверка мины на клетке, на которую стал юзер
-        public int CheckMine(Player player)
+        public int CheckBomb(Player player)
         {
             // Если юзер на клетке 9-9 - победа
-            if ((player.PlayerPositionHorizontal == FieldHorizontal - 1) && 
-                (player.PlayerPositionVertical == FieldVertical - 1)) 
-            { 
-                player.SetHpWin(); 
+            if ((player.PositionHorizontal == FieldHorizontal - 1) && 
+                (player.PositionVertical == FieldVertical - 1)) 
+            {
+                player.GameOver = WIN;
                 return 0; 
             }
 
             // Если клетка пустая, то ничего не происходит
-            if (gameField[player.PlayerPositionVertical][player.PlayerPositionHorizontal] == null) 
+            if (gameField[player.PositionVertical][player.PositionHorizontal] == null) 
             { 
                 return 0;
             }
 
             // Если на клетке мина
-            if (gameField[player.PlayerPositionVertical][player.PlayerPositionHorizontal] == "Mine")
+            if (gameField[player.PositionVertical][player.PositionHorizontal] == BOMB)
             {
                 foreach(Mine mine in ListMines)
                 {
-                    if ((mine.PositionHorizontal == player.PlayerPositionHorizontal) &&
-                        (mine.PositionVertical == player.PlayerPositionVertical))
+                    if ((mine.PositionHorizontal == player.PositionHorizontal) &&
+                        (mine.PositionVertical == player.PositionVertical))
                     {
-                        if(mine.Status == "Active")
+                        if(mine.Status == ACTIVE)
                         {
                             mine.InactiveMine();
 
@@ -114,25 +102,25 @@ namespace Shkadun_Princess
                 for (int o = 0; o < FieldHorizontal; o++)
                 {
                     // Если положение юзера, выводим P
-                    if (i == player.PlayerPositionVertical && o == player.PlayerPositionHorizontal) 
+                    if (i == player.PositionVertical && o == player.PositionHorizontal) 
                     { 
-                        consoleWrok.DrowCell("Player"); 
+                        consoleWrok.DrowCell(PLAYER); 
                     }
 
                     // Если пустая, то пустую ячейку
                     else if (gameField[i][o] == null) 
                     {
-                        consoleWrok.DrowCell("Empty"); 
+                        consoleWrok.DrowCell(null); 
                     }
 
                     // Если мина, то проверяем её статус
-                    else if (gameField[i][o] == "Mine") 
+                    else if (gameField[i][o] == BOMB) 
                     { 
                         foreach(Mine mine in ListMines)
                         {
                             if(mine.PositionVertical == i && mine.PositionHorizontal == o)
                             {
-                                consoleWrok.DrowCell("Mine", mine);
+                                consoleWrok.DrowCell(BOMB, mine);
                                 break;
                             }
                         }
@@ -142,16 +130,14 @@ namespace Shkadun_Princess
             }
         }
 
-        public Map()
+        public Game()
         {
             consoleWrok = new ConsoleWork();
             ListMines = new List<Mine>();
-            FieldHorizontal = 10;
-            FieldVertical = 10;
-            gameField = new string[10][];
+            gameField = new string[FieldVertical][];
             for (int i = 0; i < 10; i++)
             {
-                gameField[i] = new string[10];
+                gameField[i] = new string[FieldHorizontal];
             }
         }
     }
