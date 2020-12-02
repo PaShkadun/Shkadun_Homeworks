@@ -22,9 +22,8 @@ namespace Shkadun_Princess
         {
             Random random = new Random();
 
-            int positionBomb = random.Next(1, (Game.FieldVertical * Game.FieldHorizontal) - 2);
-            PositionVertical = positionBomb / 10;
-            PositionHorizontal = positionBomb % 10;
+            PositionVertical = random.Next(0, Game.FieldVertical);
+            PositionHorizontal = random.Next(Game.FieldHorizontal);
             Damage = random.Next(1, 10);
             Status = ACTIVE;
         }

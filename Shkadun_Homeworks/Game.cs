@@ -12,6 +12,7 @@ namespace Shkadun_Princess
         private const string EMPTY_CELL = " ";
         private const string PLAYER_CELL = "Y";
         private const string BOMB_CELL = "X";
+        private const string SPLIT_CELL = "|";
 
         public const int FieldVertical = 10;
         public const int FieldHorizontal = 10;
@@ -66,7 +67,6 @@ namespace Shkadun_Princess
         public void DrowMap(Player player)
         {
             Console.Clear();
-            Console.WriteLine(GAME_INFO + player.HP); 
 
             for (int row = 0; row < FieldVertical; row++)
             {  
@@ -75,12 +75,12 @@ namespace Shkadun_Princess
 
                     if (row == player.PositionVertical && column == player.PositionHorizontal) 
                     {
-                        Console.WriteLine(PLAYER_CELL); 
+                        Console.Write(PLAYER_CELL); 
                     }
 
                     else if (gameField[row][column] == null) 
                     {
-                        Console.WriteLine(EMPTY_CELL);
+                        Console.Write(EMPTY_CELL);
                     }
 
                     else if (gameField[row][column] == BOMB) 
@@ -91,27 +91,46 @@ namespace Shkadun_Princess
                             {
                                 if(mine.Status != ACTIVE)
                                 {
-                                    Console.WriteLine(BOMB_CELL);
+                                    Console.Write(BOMB_CELL);
+                                }
+                                else
+                                {
+                                    Console.Write(EMPTY_CELL);
                                 }
 
                                 break;
                             }
                         }
                     }
+
+                    Console.Write(SPLIT_CELL);
                 }
 
                 Console.WriteLine();
             }
+
+            Console.WriteLine(GAME_INFO + player.HP);
         }
 
         public Game()
         {
-            ListMines = new List<Mine>(new Mine[countMines]);
             gameField = new string[FieldVertical][];
 
             for (int fieldRow = 0; fieldRow < FieldVertical; fieldRow++)
             {
                 gameField[fieldRow] = new string[FieldVertical];
+            }
+
+            ListMines = new List<Mine>();
+
+            for(int bombs = 0; bombs < countMines; bombs++)
+            {
+                ListMines.Add(new Mine());
+            }
+
+            foreach(Mine mine in ListMines)
+            {
+                gameField[mine.PositionVertical][mine.PositionHorizontal] = BOMB;
             }
         }
     }

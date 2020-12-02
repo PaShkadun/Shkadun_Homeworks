@@ -6,7 +6,7 @@ namespace Shkadun_Princess
     public class Program
     {
         private const string NEW_GAME = "new game";
-        private const string START_NEW_GAME = "Start new game?";
+        private const string START_NEW_GAME = "Start new game? y/n";
 
         static void Main(string[] args)
         {
