@@ -1,8 +1,13 @@
 ﻿
+using System;
+
 namespace Shkadun_Princess
 {
     public class Mine
     {
+        private const string ACTIVE = "Active";
+        private const string INACTIVE = "Inctive";
+
         public string Status { get; private set; }
         public int Damage { get; private set; }
         public int PositionHorizontal { get; private set; }
@@ -10,15 +15,18 @@ namespace Shkadun_Princess
 
         public void InactiveMine()
         {
-            Status = "Inactive";
+            Status = INACTIVE;
         }
 
-        public Mine(int damage, int positionVertical, int positionHorizontal)
+        public Mine()
         {
-            Status = "Active";
-            Damage = damage;
-            PositionHorizontal = positionHorizontal;
-            PositionVertical = positionVertical;
+            Random random = new Random();
+
+            int positionBomb = random.Next(1, (Game.FieldVertical * Game.FieldHorizontal) - 2);
+            PositionVertical = positionBomb / 10;
+            PositionHorizontal = positionBomb % 10;
+            Damage = random.Next(1, 10);
+            Status = ACTIVE;
         }
     }
 }

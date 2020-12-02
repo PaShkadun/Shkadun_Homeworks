@@ -5,19 +5,21 @@ namespace Shkadun_Princess
 {
     public class Program
     {
+        private const string NEW_GAME = "new game";
+        private const string START_NEW_GAME = "Start new game?";
+
         static void Main(string[] args)
         {
-            ConsoleWork consoleWork = new ConsoleWork();
             Player player = new Player();
             Game game = new Game();
 
-            game.GenerationBombCells();
             game.DrowMap(player);
 
             bool inGame = true;
 
             while (inGame)
             {
+
                 switch (Console.ReadKey(true).Key)
                 {
                     case ConsoleKey.W:
@@ -42,13 +44,16 @@ namespace Shkadun_Princess
 
                     default: break;
                 }
+
                 if (player.GameOver != null)
                 {
-                    if (consoleWork.GameOver(player.GameOver) == "new game")
+
+                    Console.WriteLine($"You {player.GameOver}. {START_NEW_GAME}");
+
+                    if (Console.ReadLine() == NEW_GAME)
                     {
                         player = new Player();
                         game = new Game();
-                        game.GenerationBombCells();
                         game.DrowMap(player);
                     }
                     else
