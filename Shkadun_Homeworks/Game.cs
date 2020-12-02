@@ -5,14 +5,14 @@ namespace Shkadun_Princess
 {
     public class Game
     {
-        private const string WIN = "Win";
-        private const string BOMB = "Bomb";
-        private const string ACTIVE = "Active";
-        private const string GAME_INFO = "The Princess Game\nHP: ";
-        private const string EMPTY_CELL = " ";
-        private const string PLAYER_CELL = "Y";
-        private const string BOMB_CELL = "X";
-        private const string SPLIT_CELL = "|";
+        private const string Win = "Win";
+        private const string Bomb = "Bomb";
+        private const string Active = "Active";
+        private const string GameInfo = "The Princess Game\nHP: ";
+        private const string EmptyCell = " ";
+        private const string PlayerCell = "Y";
+        private const string BombCell = "X";
+        private const string SplitCell = "|";
 
         public const int FieldVertical = 10;
         public const int FieldHorizontal = 10;
@@ -23,45 +23,43 @@ namespace Shkadun_Princess
 
         public int CheckCell(Player player)
         {
+            int damage = 0;
+
             if ((player.PositionHorizontal == FieldHorizontal - 1) && 
                 (player.PositionVertical == FieldVertical - 1)) 
             {
-                player.GameOver = WIN;
-
-                return 0; 
+                player.GameOver = Win;
+                damage = 0;
             }
-
             else if (gameField[player.PositionVertical][player.PositionHorizontal] == null) 
-            { 
-                return 0;
+            {
+                damage = 0;
             }
-
-            else if (gameField[player.PositionVertical][player.PositionHorizontal] == BOMB)
+            else if (gameField[player.PositionVertical][player.PositionHorizontal] == Bomb)
             {
                 foreach(Mine mine in ListMines)
                 {
                     if ((mine.PositionHorizontal == player.PositionHorizontal) &&
                         (mine.PositionVertical == player.PositionVertical))
                     {
-                        if(mine.Status == ACTIVE)
+                        if(mine.Status == Active)
                         {
                             mine.InactiveMine();
-
-                            return mine.Damage;
+                            damage = mine.Damage;
                         }
                         else
                         {
-                            return 0;
+                            damage = 0;
                         }
                     }
                 }
-
-                return 0; 
             }
             else 
-            { 
-                return 0; 
+            {
+                damage = 0;
             }
+
+            return damage;
         }
 
         public void DrowMap(Player player)
@@ -75,27 +73,27 @@ namespace Shkadun_Princess
 
                     if (row == player.PositionVertical && column == player.PositionHorizontal) 
                     {
-                        Console.Write(PLAYER_CELL); 
+                        Console.Write(PlayerCell); 
                     }
 
                     else if (gameField[row][column] == null) 
                     {
-                        Console.Write(EMPTY_CELL);
+                        Console.Write(EmptyCell);
                     }
 
-                    else if (gameField[row][column] == BOMB) 
+                    else if (gameField[row][column] == Bomb) 
                     { 
                         foreach(Mine mine in ListMines)
                         {
                             if(mine.PositionVertical == row && mine.PositionHorizontal == column)
                             {
-                                if(mine.Status != ACTIVE)
+                                if(mine.Status != Active)
                                 {
-                                    Console.Write(BOMB_CELL);
+                                    Console.Write(BombCell);
                                 }
                                 else
                                 {
-                                    Console.Write(EMPTY_CELL);
+                                    Console.Write(EmptyCell);
                                 }
 
                                 break;
@@ -103,13 +101,13 @@ namespace Shkadun_Princess
                         }
                     }
 
-                    Console.Write(SPLIT_CELL);
+                    Console.Write(SplitCell);
                 }
 
                 Console.WriteLine();
             }
 
-            Console.WriteLine(GAME_INFO + player.HP);
+            Console.WriteLine(GameInfo + player.HP);
         }
 
         public Game()
@@ -130,7 +128,7 @@ namespace Shkadun_Princess
 
             foreach(Mine mine in ListMines)
             {
-                gameField[mine.PositionVertical][mine.PositionHorizontal] = BOMB;
+                gameField[mine.PositionVertical][mine.PositionHorizontal] = Bomb;
             }
         }
     }

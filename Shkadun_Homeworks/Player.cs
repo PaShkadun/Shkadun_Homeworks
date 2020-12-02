@@ -3,8 +3,8 @@ namespace Shkadun_Princess
 {
     public class Player
     {
-        private const int PLAYER_DEAD = 0;
-        private const string LOSE = "LOSE";
+        private const int PlayerDead = 0;
+        private const string Lose = "LOSE";
 
         public int HP { get; private set; } = 10;
         public int PositionHorizontal { get; private set; } = 0;
@@ -28,9 +28,9 @@ namespace Shkadun_Princess
             int damage = game.CheckCell(this);
             HP -= damage;                     
 
-            if(HP <= PLAYER_DEAD)
+            if(HP <= PlayerDead)
             {
-                GameOver = LOSE;
+                GameOver = Lose;
             }
 
             game.DrowMap(this);

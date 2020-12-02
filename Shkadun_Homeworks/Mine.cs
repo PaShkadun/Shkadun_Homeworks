@@ -5,8 +5,8 @@ namespace Shkadun_Princess
 {
     public class Mine
     {
-        private const string ACTIVE = "Active";
-        private const string INACTIVE = "Inctive";
+        private const string Active = "Active";
+        private const string Incative = "Inctive";
 
         public string Status { get; private set; }
         public int Damage { get; private set; }
@@ -15,7 +15,7 @@ namespace Shkadun_Princess
 
         public void InactiveMine()
         {
-            Status = INACTIVE;
+            Status = Incative;
         }
 
         public Mine()
@@ -25,7 +25,7 @@ namespace Shkadun_Princess
             PositionVertical = random.Next(0, Game.FieldVertical);
             PositionHorizontal = random.Next(Game.FieldHorizontal);
             Damage = random.Next(1, 10);
-            Status = ACTIVE;
+            Status = Active;
         }
     }
 }

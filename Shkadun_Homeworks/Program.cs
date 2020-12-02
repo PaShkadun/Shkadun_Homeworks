@@ -5,8 +5,8 @@ namespace Shkadun_Princess
 {
     public class Program
     {
-        private const string NEW_GAME = "new game";
-        private const string START_NEW_GAME = "Start new game? y/n";
+        private const string NewGame = "new game";
+        private const string StartNewGame = "Start new game? y/n";
 
         static void Main(string[] args)
         {
@@ -42,15 +42,16 @@ namespace Shkadun_Princess
                         player.Move(game, horizontal: -1); 
                         break;
 
-                    default: break;
+                    default: 
+                        break;
                 }
 
                 if (player.GameOver != null)
                 {
 
-                    Console.WriteLine($"You {player.GameOver}. {START_NEW_GAME}");
+                    Console.WriteLine($"You {player.GameOver}. {StartNewGame}");
 
-                    if (Console.ReadLine() == NEW_GAME)
+                    if (Console.ReadLine() == NewGame)
                     {
                         player = new Player();
                         game = new Game();
