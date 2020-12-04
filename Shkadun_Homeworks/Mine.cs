@@ -23,7 +23,7 @@ namespace Shkadun_Princess
             Random random = new Random();
 
             PositionVertical = random.Next(0, Game.FieldVertical);
-            PositionHorizontal = random.Next(Game.FieldHorizontal);
+            PositionHorizontal = random.Next(0, Game.FieldHorizontal);
             Damage = random.Next(1, 10);
             Status = Active;
         }

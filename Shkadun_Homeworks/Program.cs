@@ -19,7 +19,6 @@ namespace Shkadun_Princess
 
             while (inGame)
             {
-
                 switch (Console.ReadKey(true).Key)
                 {
                     case ConsoleKey.W:
@@ -48,7 +47,6 @@ namespace Shkadun_Princess
 
                 if (player.GameOver != null)
                 {
-
                     Console.WriteLine($"You {player.GameOver}. {StartNewGame}");
 
                     if (Console.ReadLine() == NewGame)

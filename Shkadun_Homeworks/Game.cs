@@ -16,6 +16,7 @@ namespace Shkadun_Princess
 
         public const int FieldVertical = 10;
         public const int FieldHorizontal = 10;
+        private const int NullDamage = 0;
 
         string[][] gameField;
         private int countMines = 10;
@@ -23,17 +24,17 @@ namespace Shkadun_Princess
 
         public int CheckCell(Player player)
         {
-            int damage = 0;
+            int damage = NullDamage;
 
             if ((player.PositionHorizontal == FieldHorizontal - 1) && 
                 (player.PositionVertical == FieldVertical - 1)) 
             {
                 player.GameOver = Win;
-                damage = 0;
+                damage = NullDamage;
             }
             else if (gameField[player.PositionVertical][player.PositionHorizontal] == null) 
             {
-                damage = 0;
+                damage = NullDamage;
             }
             else if (gameField[player.PositionVertical][player.PositionHorizontal] == Bomb)
             {
@@ -49,14 +50,14 @@ namespace Shkadun_Princess
                         }
                         else
                         {
-                            damage = 0;
+                            damage = NullDamage;
                         }
                     }
                 }
             }
             else 
             {
-                damage = 0;
+                damage = NullDamage;
             }
 
             return damage;
@@ -70,17 +71,14 @@ namespace Shkadun_Princess
             {  
                 for (int column = 0; column < FieldHorizontal; column++)
                 {
-
                     if (row == player.PositionVertical && column == player.PositionHorizontal) 
                     {
                         Console.Write(PlayerCell); 
                     }
-
                     else if (gameField[row][column] == null) 
                     {
                         Console.Write(EmptyCell);
                     }
-
                     else if (gameField[row][column] == Bomb) 
                     { 
                         foreach(Mine mine in ListMines)
