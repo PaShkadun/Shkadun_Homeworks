@@ -3,37 +3,37 @@ namespace Shkadun_Princess
 {
     public class Player
     {
-        private const int PlayerDead = 0;
-        private const string Lose = "LOSE";
+        private const int playerDead = 0;
+        private const string lose = "LOSE";
 
         public int HP { get; private set; } = 10;
-        public int PositionHorizontal { get; private set; } = 0;
-        public int PositionVertical { get; private set; } = 0;
-        public string GameOver { get; set; }
+        public int positionHorizontal { get; private set; } = 0;
+        public int positionVertical { get; private set; } = 0;
+        public string gameOver { get; set; }
 
         public void Move(Game game, int horizontal = 0, int vertical = 0)
         {
-            if((PositionHorizontal + horizontal) >= 0 && 
-               (PositionHorizontal + horizontal) <= (Game.FieldHorizontal - 1))
+            if((positionHorizontal + horizontal) >= 0 && 
+               (positionHorizontal + horizontal) <= (Game.fieldHorizontal - 1))
             {
-                PositionHorizontal += horizontal;
+                positionHorizontal += horizontal;
             }
 
-            if((PositionVertical + vertical) >= 0 &&
-               (PositionVertical + vertical) <= (Game.FieldVertical - 1))
+            if((positionVertical + vertical) >= 0 &&
+               (positionVertical + vertical) <= (Game.fieldVertical - 1))
             {
-                PositionVertical += vertical;
+                positionVertical += vertical;
             }
 
-            int damage = game.CheckCell(this);
+            int damage = game.CheckCell();
             HP -= damage;                     
 
-            if(HP <= PlayerDead)
+            if(HP <= playerDead)
             {
-                GameOver = Lose;
+                gameOver = lose;
             }
 
-            game.DrowMap(this);
+            game.DrowMap();
         }
     }
 }

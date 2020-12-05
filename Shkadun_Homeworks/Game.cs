@@ -1,97 +1,96 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Shkadun_Princess
 {
     public class Game
     {
-        private const string Win = "Win";
-        private const string Bomb = "Bomb";
-        private const string Active = "Active";
-        private const string GameInfo = "The Princess Game\nHP: ";
-        private const string EmptyCell = " ";
-        private const string PlayerCell = "Y";
-        private const string BombCell = "X";
-        private const string SplitCell = "|";
+        private const string win = "Win";
+        private const string bomb = "Bomb";
+        private const string gameInfo = "The Princess Game\nHP: ";
+        private const string emptyCell = " ";
+        private const string playerCell = "Y";
+        private const string bombCell = "X";
+        private const string splitCell = "|";
 
-        public const int FieldVertical = 10;
-        public const int FieldHorizontal = 10;
-        private const int NullDamage = 0;
+        public const int fieldVertical = 10;
+        public const int fieldHorizontal = 10;
+        private const int nullDamage = 0;
 
-        string[][] gameField;
+        private string[][] gameField;
         private int countMines = 10;
-        private List<Mine> ListMines;
+        private Mine[] listMines;
+        public Player player;
 
-        public int CheckCell(Player player)
+        public int CheckCell()
         {
-            int damage = NullDamage;
+            int damage = nullDamage;
 
-            if ((player.PositionHorizontal == FieldHorizontal - 1) && 
-                (player.PositionVertical == FieldVertical - 1)) 
+            if ((player.positionHorizontal == fieldHorizontal - 1) && 
+                (player.positionVertical == fieldVertical - 1)) 
             {
-                player.GameOver = Win;
-                damage = NullDamage;
+                player.gameOver = win;
+                damage = nullDamage;
             }
-            else if (gameField[player.PositionVertical][player.PositionHorizontal] == null) 
+            else if (gameField[player.positionVertical][player.positionHorizontal] == null) 
             {
-                damage = NullDamage;
+                damage = nullDamage;
             }
-            else if (gameField[player.PositionVertical][player.PositionHorizontal] == Bomb)
+            else if (gameField[player.positionVertical][player.positionHorizontal] == bomb)
             {
-                foreach(Mine mine in ListMines)
+                foreach(Mine mine in listMines)
                 {
-                    if ((mine.PositionHorizontal == player.PositionHorizontal) &&
-                        (mine.PositionVertical == player.PositionVertical))
+                    if ((mine.PositionHorizontal == player.positionHorizontal) &&
+                        (mine.PositionVertical == player.positionVertical))
                     {
-                        if(mine.Status == Active)
+                        if(mine.Status == StatusBomb.Active)
                         {
                             mine.InactiveMine();
                             damage = mine.Damage;
                         }
                         else
                         {
-                            damage = NullDamage;
+                            damage = nullDamage;
                         }
                     }
                 }
             }
             else 
             {
-                damage = NullDamage;
+                damage = nullDamage;
             }
 
             return damage;
         }
 
-        public void DrowMap(Player player)
+        public void DrowMap()
         {
             Console.Clear();
 
-            for (int row = 0; row < FieldVertical; row++)
+            for (int row = 0; row < fieldVertical; row++)
             {  
-                for (int column = 0; column < FieldHorizontal; column++)
+                for (int column = 0; column < fieldHorizontal; column++)
                 {
-                    if (row == player.PositionVertical && column == player.PositionHorizontal) 
+                    if (row == player.positionVertical && column == player.positionHorizontal) 
                     {
-                        Console.Write(PlayerCell); 
+                        Console.Write(playerCell); 
                     }
                     else if (gameField[row][column] == null) 
                     {
-                        Console.Write(EmptyCell);
+                        Console.Write(emptyCell);
                     }
-                    else if (gameField[row][column] == Bomb) 
+                    else if (gameField[row][column] == bomb) 
                     { 
-                        foreach(Mine mine in ListMines)
+                        foreach(Mine mine in listMines)
                         {
                             if(mine.PositionVertical == row && mine.PositionHorizontal == column)
                             {
-                                if(mine.Status != Active)
+                                if(mine.Status != StatusBomb.Inactive)
                                 {
-                                    Console.Write(BombCell);
+                                    Console.Write(bombCell);
                                 }
                                 else
                                 {
-                                    Console.Write(EmptyCell);
+                                    Console.Write(emptyCell);
                                 }
 
                                 break;
@@ -99,34 +98,35 @@ namespace Shkadun_Princess
                         }
                     }
 
-                    Console.Write(SplitCell);
+                    Console.Write(splitCell);
                 }
 
                 Console.WriteLine();
             }
 
-            Console.WriteLine(GameInfo + player.HP);
+            Console.WriteLine(gameInfo + player.HP);
         }
 
         public Game()
         {
-            gameField = new string[FieldVertical][];
+            player = new Player();
+            gameField = new string[fieldVertical][];
 
-            for (int fieldRow = 0; fieldRow < FieldVertical; fieldRow++)
+            for (int fieldRow = 0; fieldRow < fieldVertical; fieldRow++)
             {
-                gameField[fieldRow] = new string[FieldVertical];
+                gameField[fieldRow] = new string[fieldVertical];
             }
 
-            ListMines = new List<Mine>();
+            listMines = new Mine[countMines];
 
             for(int bombs = 0; bombs < countMines; bombs++)
             {
-                ListMines.Add(new Mine());
+                listMines[bombs] = new Mine();
             }
 
-            foreach(Mine mine in ListMines)
+            foreach(Mine mine in listMines)
             {
-                gameField[mine.PositionVertical][mine.PositionHorizontal] = Bomb;
+                gameField[mine.PositionVertical][mine.PositionHorizontal] = bomb;
             }
         }
     }

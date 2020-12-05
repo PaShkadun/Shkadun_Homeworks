@@ -1,19 +1,17 @@
 ﻿using System;
-using System.Threading;
 
 namespace Shkadun_Princess
 {
     public class Program
     {
-        private const string NewGame = "new game";
-        private const string StartNewGame = "Start new game? y/n";
+        private const string newGame = "new game";
+        private const string startNewGame = "Start new game? y/n";
 
         static void Main(string[] args)
         {
-            Player player = new Player();
             Game game = new Game();
 
-            game.DrowMap(player);
+            game.DrowMap();
 
             bool inGame = true;
 
@@ -23,37 +21,36 @@ namespace Shkadun_Princess
                 {
                     case ConsoleKey.W:
                     case ConsoleKey.UpArrow: 
-                        player.Move(game, vertical: -1); 
+                        game.player.Move(game, vertical: -1); 
                         break;
 
                     case ConsoleKey.S:
                     case ConsoleKey.DownArrow: 
-                        player.Move(game, vertical: +1); 
+                        game.player.Move(game, vertical: +1); 
                         break;
 
                     case ConsoleKey.D:
                     case ConsoleKey.RightArrow: 
-                        player.Move(game, horizontal: +1); 
+                        game.player.Move(game, horizontal: +1); 
                         break;
 
                     case ConsoleKey.A:
                     case ConsoleKey.LeftArrow: 
-                        player.Move(game, horizontal: -1); 
+                        game.player.Move(game, horizontal: -1); 
                         break;
 
                     default: 
                         break;
                 }
 
-                if (player.GameOver != null)
+                if (game.player.gameOver != null)
                 {
-                    Console.WriteLine($"You {player.GameOver}. {StartNewGame}");
+                    Console.WriteLine($"You {game.player.gameOver}. {startNewGame}");
 
-                    if (Console.ReadLine() == NewGame)
+                    if (Console.ReadLine() == newGame)
                     {
-                        player = new Player();
                         game = new Game();
-                        game.DrowMap(player);
+                        game.DrowMap();
                     }
                     else
                     {
