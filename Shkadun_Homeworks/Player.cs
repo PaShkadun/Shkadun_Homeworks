@@ -33,7 +33,7 @@ namespace Shkadun_Princess
                 gameOver = lose;
             }
 
-            game.DrowMap();
+            game.DrawMap();
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Shkadun_Princess
         {
             Game game = new Game();
 
-            game.DrowMap();
+            game.DrawMap();
 
             bool inGame = true;
 
@@ -50,7 +50,7 @@ namespace Shkadun_Princess
                     if (Console.ReadLine() == newGame)
                     {
                         game = new Game();
-                        game.DrowMap();
+                        game.DrawMap();
                     }
                     else
                     {

@@ -17,7 +17,6 @@ namespace Shkadun_Princess
         private const int nullDamage = 0;
 
         private string[][] gameField;
-        private int countMines = 10;
         private Mine[] listMines;
         public Player player;
 
@@ -62,7 +61,7 @@ namespace Shkadun_Princess
             return damage;
         }
 
-        public void DrowMap()
+        public void DrawMap()
         {
             Console.Clear();
 
@@ -86,11 +85,11 @@ namespace Shkadun_Princess
                             {
                                 if(mine.Status != StatusBomb.Inactive)
                                 {
-                                    Console.Write(bombCell);
+                                    Console.Write(emptyCell);
                                 }
                                 else
                                 {
-                                    Console.Write(emptyCell);
+                                    Console.Write(bombCell);
                                 }
 
                                 break;
@@ -107,7 +106,7 @@ namespace Shkadun_Princess
             Console.WriteLine(gameInfo + player.HP);
         }
 
-        public Game()
+        public Game(in int countMines = 10)
         {
             player = new Player();
             gameField = new string[fieldVertical][];
