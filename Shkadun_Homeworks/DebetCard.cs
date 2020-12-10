@@ -4,87 +4,95 @@ namespace Shkadun_Bank
 {
     class DebetCard : Card
     {
-        public override void PullCash() //Снять с карты
+        public override void PullCash()
         {
-            int howMany = CWAR.HowMany("снять с");  //Запрос суммы
+            int howManyPull = consoleProvider.HowManyTransfer(ConsoleProvider.pullCash);
 
-            if (howMany > Balance)  //Если средств недостаточно
+            if (howManyPull > Balance)
             {
-                CWAR.SendMessage(ConsoleWriteAndRead.INVALID_BALANCE);
+                consoleProvider.SendMessage(ConsoleProvider.INVALID_BALANCE);
             }
             else
             {
-                Balance -= howMany;
-                CWAR.SendMessage(ConsoleWriteAndRead.SUCCESSFUL);
+                Balance -= howManyPull;
+
+                consoleProvider.SendMessage(ConsoleProvider.SUCCESSFUL);
             }
         }
 
-        public void Transfer(DebetCard card)    //Перевод на дебетовую карту
+        public void Transfer(DebetCard card)
         {
-            int howMany = CWAR.HowMany("перевести на"); //Запрос суммы
+            int howManyTransfer = consoleProvider.HowManyTransfer(ConsoleProvider.transferCash, ConsoleProvider.transferOnCard);
 
-            if (howMany > Balance)  //Если средств недостаточно
+            if (howManyTransfer > Balance)  //Если средств недостаточно
             {
-                CWAR.SendMessage(ConsoleWriteAndRead.INVALID_BALANCE);
+                consoleProvider.SendMessage(ConsoleProvider.INVALID_BALANCE);
             }
             else
             {
-                Balance -= howMany;
-                card.Balance += howMany;
-                CWAR.SendMessage(ConsoleWriteAndRead.SUCCESSFUL);
+                Balance -= howManyTransfer;
+                card.Balance += howManyTransfer;
+
+                consoleProvider.SendMessage(ConsoleProvider.SUCCESSFUL);
             }
         }
 
-        public override void Transfer(string numberAccount, int howMany)    //Перевод на счёт
+        public override void Transfer(string numberAccount, int howManyTransfer)
         {
             if (numberAccount.Length != 20)
             {
-                CWAR.SendMessage(ConsoleWriteAndRead.INVALID_INPUT);
+                consoleProvider.SendMessage(ConsoleProvider.INVALID_INPUT);
+
                 return;
             }
 
-            Regex regex = new Regex(@"\w");         //Разрешаем только цифры и буквы
-            MatchCollection match = regex.Matches(numberAccount);   //Считаем кол-во совпадений
+            //Разрешаем только цифры и буквы
+            Regex regex = new Regex(@"\w");
+            //Считаем кол-во совпадений
+            MatchCollection match = regex.Matches(numberAccount);   
 
-            if (match.Count != 20)   //Если не 20, то некорректный ввод
+            if (match.Count != 20)
             {
-                CWAR.SendMessage(ConsoleWriteAndRead.INVALID_INPUT);
+                consoleProvider.SendMessage(ConsoleProvider.INVALID_INPUT);
             }
             else
             {
-                if (howMany > Balance)
+                if (howManyTransfer > Balance)
                 {
-                    CWAR.SendMessage(ConsoleWriteAndRead.INVALID_BALANCE);
+                    consoleProvider.SendMessage(ConsoleProvider.INVALID_BALANCE);
                 }
                 else
                 {
-                    Balance -= howMany;
-                    CWAR.SendMessage(ConsoleWriteAndRead.SUCCESSFUL);
+                    Balance -= howManyTransfer;
+
+                    consoleProvider.SendMessage(ConsoleProvider.SUCCESSFUL);
                 }
             }
         }
 
         public override void Transfer(CreditCard card)  //Перевод на кредитную карту
         {
-            int howMany = CWAR.HowMany("перевести на");
+            int howManyTransfer = consoleProvider.HowManyTransfer(ConsoleProvider.transferCash, ConsoleProvider.transferOnCard);
 
-            if (howMany > Balance)
+            if (howManyTransfer > Balance)
             {
-                CWAR.SendMessage(ConsoleWriteAndRead.INVALID_BALANCE);
+                consoleProvider.SendMessage(ConsoleProvider.INVALID_BALANCE);
             }
             else
             {
-                Balance -= howMany;
-                card.Balance += howMany;
-                CWAR.SendMessage(ConsoleWriteAndRead.SUCCESSFUL);
+                Balance -= howManyTransfer;
+                card.Balance += howManyTransfer;
+
+                consoleProvider.SendMessage(ConsoleProvider.SUCCESSFUL);
             }
         }
 
         public DebetCard()
         {
             Balance = 0;
+
             CardNumber = NewRandom.RandomCardNumber();
-            CWAR = new ConsoleWriteAndRead();
+            consoleProvider = new ConsoleProvider();
         }
     }
 }

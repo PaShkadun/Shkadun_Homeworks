@@ -9,15 +9,21 @@ namespace Shkadun_Bank
         public int MonthsOfDebt { get; set; }
         public int Sum { get; set; }
 
-        //Проверка кредитов по картам(вызывается при попытке перевода, попытке взять кредит)
+        // Проверка кредитов по картам(вызывается при попытке перевода, попытке взять кредит)
         internal static bool CheckCreditList(List<Credit> creditList)
         {
             bool negativeCredit = false;
 
             foreach (Credit credit in creditList)
             {
-                if (credit.MonthsOfDebt > 0) { negativeCredit = true; break; } //Если нашло не погашенный, преркащает искать
+                if (credit.MonthsOfDebt > 0) 
+                { 
+                    negativeCredit = true; 
+                    break; 
+                } 
+                // Если нашло непогашенный, преркащает искать
             }
+
             return negativeCredit;
         }
 

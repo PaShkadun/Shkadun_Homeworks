@@ -5,21 +5,27 @@ namespace Shkadun_Bank
     {
         public int Balance { get; set; }
         public long CardNumber { get; protected set; }
-        public ConsoleWriteAndRead CWAR { get; set; }   //Экземпляр класса консольного ввода-вывода сообщений
+
+        protected ConsoleProvider consoleProvider;
 
         abstract public void Transfer(CreditCard card);
-        abstract public void Transfer(string NumberAccount, int howMany);
+
+        abstract public void Transfer(string NumberAccount, int howManySpend);
+
         //Положить средства на карту
-        public bool AddCash(int howMany, int accountMoney)
-        {
-            if (howMany > accountMoney)  //Если средств недостаточно
+        public bool AddCash(int howManySpend, int accountMoney)
+        {  
+            //Если средств недостаточно
+            if (howManySpend > accountMoney)
             {
-                CWAR.SendMessage(ConsoleWriteAndRead.INVALID_BALANCE);
+                consoleProvider.SendMessage(ConsoleProvider.INVALID_BALANCE);
+
                 return false;
             }
             else
             {
-                CWAR.SendMessage(ConsoleWriteAndRead.SUCCESSFUL);
+                consoleProvider.SendMessage(ConsoleProvider.SUCCESSFUL);
+
                 return true;
             }
         }

@@ -5,47 +5,62 @@ namespace Shkadun_Bank
 {
     class Account
     {
+        private const string debitTypeCard = "Дебетовая";
+        private const string creditTypeCard = "Кредитная";
+
+        private const byte debitCard = 1;
+        private const byte creditCard = 0;
+
+        private static ConsoleProvider consoleProvider;
+
         public List<Card> listCard;
+
         public string NumberAccount { get; private set; }
         public int Money { get; set; }
         public int CountCard { get; private set; }
-        static ConsoleWriteAndRead CWAR;
 
-        public static void PayCredit(List<Account> listAccount, int choose) //Оплата кредита
+        // Оплата кредита
+        public static void PayCredit(List<Account> listAccount, int chooseAccount) 
         {
-            //Если нет карт, выходим
-            if (listAccount[choose].listCard.Count == 0) { CWAR.SendMessage(ConsoleWriteAndRead.INVALID_CARD); return; }
+            // Если нет карт, выходим
+            if (listAccount[chooseAccount].listCard.Count == 0) 
+            { 
+                consoleProvider.SendMessage(ConsoleProvider.INVALID_CARD); 
+                return; 
+            }
 
-            //Выбираем карту
-            ListCard(listAccount, choose);
-            int chooseCard = CWAR.ReadNumber(0, listAccount[choose].listCard.Count - 1);
+            // Выбираем карту
+            ListCard(listAccount, chooseAccount);
+            int chooseCard = consoleProvider.ReadNumber(0, listAccount[chooseAccount].listCard.Count - 1);
 
-            //Пробуем выполнить. Если не получается - карта не кредитная
+            // Пробуем выполнить. Если не получается - карта не кредитная
             try
             {
-                CreditCard creditCard = (CreditCard)listAccount[choose].listCard[chooseCard];
+                CreditCard creditCard = (CreditCard)listAccount[chooseAccount].listCard[chooseCard];
 
-                //Если нет кредитов
+                // Если нет кредитов
                 if (creditCard.creditList.Count == 0)
                 {
-                    CWAR.SendMessage(ConsoleWriteAndRead.NOT_HAVE_CREDIT);
+                    consoleProvider.SendMessage(ConsoleProvider.NOT_HAVE_CREDIT);
                 }
                 else
                 {
-                    int i = 0;
-                    //Вывод списка кредитов
+                    int numberCard = 0;
+
+                    // Вывод списка кредитов
                     foreach (Credit credit in creditCard.creditList)
                     {
-                        Console.WriteLine($"{i} - {credit.Sum}");
-                        i++;
+                        Console.WriteLine($"{numberCard} - {credit.Sum}");
+                        numberCard++;
                     }
 
-                    int chooseCreditCard = CWAR.PayCredit(i);   //Выбор кредита
+                    // Выбор кредита
+                    int chooseCreditCard = consoleProvider.PayCredit(numberCard);   
 
-                    //Если недостаточно средств
+                    // Если недостаточно средств
                     if (creditCard.Balance < creditCard.creditList[chooseCreditCard].Sum)
                     {
-                        CWAR.SendMessage(ConsoleWriteAndRead.INVALID_BALANCE);
+                        consoleProvider.SendMessage(ConsoleProvider.INVALID_BALANCE);
                     }
                     else
                     {
@@ -53,48 +68,55 @@ namespace Shkadun_Bank
                         creditCard.creditList[chooseCreditCard].Sum = 0;
                         creditCard.creditList[chooseCreditCard].MonthsOfDebt = 0;
 
-                        //Если кредит выплачен, удаляем
+                        // Если кредит выплачен, удаляем
                         if (creditCard.creditList[chooseCreditCard].Months == 0 &&
                             creditCard.creditList[chooseCreditCard].Sum == 0)
                         {
                             creditCard.creditList.RemoveAt(chooseCreditCard);
                         }
 
-                        CWAR.SendMessage(ConsoleWriteAndRead.SUCCESSFUL);
+                        consoleProvider.SendMessage(ConsoleProvider.SUCCESSFUL);
                     }
                 }
             }
-            catch { CWAR.SendMessage(ConsoleWriteAndRead.BLOCKING_OPERATION); }
+            catch { 
+                consoleProvider.SendMessage(ConsoleProvider.BLOCKING_OPERATION);
+            }
         }
 
-        //Проверка карт и начисления кредитов
+        // Проверка карт и начисления кредитов
         public static void CheckAllCards(List<Account> listAccount)
         {
             CreditCard creditCard;
 
-            if (listAccount.Count == 0)  //Если карт нет
+            if (listAccount.Count == 0)
             {
                 return;
             }
 
             foreach (Account account in listAccount)
             {
-                if (account.listCard.Count == 0) ;  //Если карт на счёте нет.
+                if (account.listCard.Count == 0)
+                {
+                    return;
+                }
                 else
                 {
-                    foreach (Card card in account.listCard) //Проверяем карты
+                    foreach (Card card in account.listCard)
                     {
                         try
-                        {
-                            creditCard = (CreditCard)card;  //И, если это кредитная, начисляем кредиты
+                        {  
+                            // Если это кредитная, начисляем кредиты
+                            creditCard = (CreditCard)card;
 
-                            for (int i = 0; i < creditCard.creditList.Count; i++)    //...если они есть
+                            // ...если они есть
+                            for (int creditNumber = 0; creditNumber < creditCard.creditList.Count; creditNumber++)    
                             {
-                                if (creditCard.creditList[i].Months > 0)
+                                if (creditCard.creditList[creditNumber].Months > 0)
                                 {
-                                    creditCard.creditList[i].Months--;
-                                    creditCard.creditList[i].Sum += creditCard.creditList[i].CreditRate;
-                                    creditCard.creditList[i].MonthsOfDebt++;
+                                    creditCard.creditList[creditNumber].Months--;
+                                    creditCard.creditList[creditNumber].Sum += creditCard.creditList[creditNumber].CreditRate;
+                                    creditCard.creditList[creditNumber].MonthsOfDebt++;
                                 }
                             }
                         }
@@ -104,159 +126,195 @@ namespace Shkadun_Bank
             }
         }
 
-        //Получение кредита
-        public static void GetCredit(List<Account> listAccount, int choose)
+        // Получение кредита
+        public static void GetCredit(List<Account> listAccount, int chooseAccount)
         {
-            if (listAccount[choose].listCard.Count == 0) { return; }
+            if (listAccount[chooseAccount].listCard.Count == 0) 
+            { 
+                return; 
+            }
+
             try
             {
-                ListCard(listAccount, choose);  //Выбор счёта
-                int chooseCard = CWAR.ReadNumber(0, listAccount[choose].listCard.Count - 1);    //Выбор карты
-                //Попытка приравнять карту к кредитной карте
-                CreditCard creditCard = (CreditCard)listAccount[choose].listCard[chooseCard];
-                CWAR.SendMessage(ConsoleWriteAndRead.CREDIT_INFO);
+                ListCard(listAccount, chooseAccount);
 
-                if (!Credit.CheckCreditList(creditCard.creditList))  //Если нет задолженностей по кредитам
+                int chooseCard = consoleProvider.ReadNumber(0, listAccount[chooseAccount].listCard.Count - 1);    
+                
+                CreditCard creditCard = (CreditCard)listAccount[chooseAccount].listCard[chooseCard];
+
+                consoleProvider.SendMessage(ConsoleProvider.CREDIT_INFO);
+
+                // Если есть задолженности по кредитам
+                if (!Credit.CheckCreditList(creditCard.creditList))
                 {
-                    int howMany = CWAR.ReadNumber();    //Сумма
-                    int months = CWAR.ReadNumber();     //Количество месяцев
+                    int howMany = consoleProvider.ReadNumber();
+                    int months = consoleProvider.ReadNumber();
+
                     creditCard.creditList.Add(new Credit(howMany, months));
+
                     creditCard.Balance += howMany;
-                    CWAR.SendMessage(ConsoleWriteAndRead.SUCCESSFUL);
+
+                    consoleProvider.SendMessage(ConsoleProvider.SUCCESSFUL);
                 }
             }
             catch
             {
-                CWAR.SendMessage(ConsoleWriteAndRead.BLOCKING_OPERATION);
+                consoleProvider.SendMessage(ConsoleProvider.BLOCKING_OPERATION);
             }
         }
 
-        //Снятие(переходный метод)
-        public static void PullMoney(List<Account> listAccount, int choose)
+        // Снятие(переходный метод)
+        public static void PullMoney(List<Account> listAccount, int chooseAccount)
         {
-            //Если карт нет
-            if (listAccount[choose].listCard.Count == 0) { return; }
+            if (listAccount[chooseAccount].listCard.Count == 0) {
+                return; 
+            }
 
-            //Если есть, выбираем карту и переходим к методу Card.PullCash();
-            ListCard(listAccount, choose);
-            int chooseCard = CWAR.ReadNumber(0, listAccount[choose].listCard.Count - 1);
-            listAccount[choose].listCard[chooseCard].PullCash();
+            ListCard(listAccount, chooseAccount);
+
+            int chooseCard = consoleProvider.ReadNumber(0, listAccount[chooseAccount].listCard.Count - 1);
+
+            listAccount[chooseAccount].listCard[chooseCard].PullCash();
         }
 
-        //Вывод счетов
+        // Вывод счетов
         public static void ListAccount(List<Account> listAccount)
         {
-            //Если их нет
-            if (listAccount.Count == 0) { return; }
+            if (listAccount.Count == 0) 
+            { 
+                return; 
+            }
 
-            int i = 0;
+            int countAccounts = 0;
 
             foreach (Account account in listAccount)
             {
-                Console.WriteLine($"{i} - {account.NumberAccount}");
+                Console.WriteLine($"{countAccounts++} - {account.NumberAccount}");
             }
         }
 
-        //Выбор карты для дальнейшего её пополнения
-        public static void ChooseCard(List<Account> listAccount, int choose)
+        // Выбор карты для дальнейшего её пополнения
+        public static void ChooseCard(List<Account> listAccount, int chooseAccount)
         {
-            if (listAccount[choose].listCard.Count == 0) { return; }
-            Account.ListCard(listAccount, choose);  //Выводим список карт на аккаунте, если они есть
-            int chooseCard = CWAR.ReadNumber(0, listAccount[choose].listCard.Count - 1);
-            int howMany = CWAR.HowMany("положить на");  //Спрашиваем, сколько ложить
-            //Переходим к методу AddCash();
-            if (listAccount[choose]
+            if (listAccount[chooseAccount].listCard.Count == 0) 
+            { 
+                return; 
+            }
+
+            Account.ListCard(listAccount, chooseAccount);
+
+            int chooseCard = consoleProvider.ReadNumber(0, listAccount[chooseAccount].listCard.Count - 1);
+            int howMany = consoleProvider.HowManyTransfer(ConsoleProvider.transferCash, ConsoleProvider.transferOnCard); 
+
+            if (listAccount[chooseAccount]
                 .listCard[chooseCard]
-                .AddCash(howMany, listAccount[choose].Money) == true)   //и пополняем карту, если всё ОК
+                .AddCash(howMany, listAccount[chooseAccount].Money) == true) 
             {
-                listAccount[choose].Money -= howMany;
-                listAccount[choose].listCard[chooseCard].Balance += howMany;
+                listAccount[chooseAccount].Money -= howMany;
+                listAccount[chooseAccount].listCard[chooseCard].Balance += howMany;
             }
         }
 
-        //Переходный метод к Card.Transfer(Card);
-        public static void TransferOnCard(List<Account> listAccount, int choose)
+        public static void TransferOnCard(List<Account> listAccount, int chooseAccount)
         {
-            if (listAccount[choose].listCard.Count == 0) { return; }
+            if (listAccount[chooseAccount].listCard.Count == 0) 
+            { 
+                return; 
+            }
 
-            //Список карт на выбранном акке
-            ListCard(listAccount, choose);
-            int chooseCard = CWAR.ReadNumber(0, listAccount[choose].listCard.Count - 1);
+            // Список карт на выбранном акке
+            ListCard(listAccount, chooseAccount);
+            int chooseCard = consoleProvider.ReadNumber(0, listAccount[chooseAccount].listCard.Count - 1);
 
-            //Выбираем акк. куда переводим
+            // Выбираем акк. куда переводим
             ListAccount(listAccount);
-            int chooseTransferAccount = CWAR.ReadNumber(0, listAccount.Count - 1);
+            int chooseTransferAccount = consoleProvider.ReadNumber(0, listAccount.Count - 1);
 
-            //Если колво карт 0
             if (listAccount[chooseTransferAccount].listCard.Count == 0)
             {
-                CWAR.SendMessage(ConsoleWriteAndRead.INVALID_CARD);
+                consoleProvider.SendMessage(ConsoleProvider.INVALID_CARD);
+
                 return;
             }
             else
             {
-                //Иначе Выбираем карту, куда переводим
                 ListCard(listAccount, chooseTransferAccount);
-                int chooseTransferCard = CWAR.ReadNumber(0, listAccount[chooseTransferAccount].listCard.Count - 1);
+                int chooseTransferCard = consoleProvider.ReadNumber(0, listAccount[chooseTransferAccount].listCard.Count - 1);
 
-                //И пытаемся(не получится, если кредитная на дебет)
+                // Попытка перевода. Не получится с кредитовой на дебетовую карту.
                 try
                 {
-                    listAccount[choose].listCard[chooseCard].Transfer(
+                    listAccount[chooseAccount].listCard[chooseCard].Transfer(
                             (CreditCard)listAccount[chooseTransferAccount].listCard[chooseTransferCard]
                         );
                 }
                 catch
                 {
-                    CWAR.SendMessage(ConsoleWriteAndRead.BLOCKING_OPERATION);
+                    consoleProvider.SendMessage(ConsoleProvider.BLOCKING_OPERATION);
                 }
             }
         }
 
-        //Переходный этап к методу Card.Transfer(account)
-        public static void TransferOnAccount(List<Account> listAccount, int choose)
+        public static void TransferOnAccount(List<Account> listAccount, int chooseAccount)
         {
-            ListCard(listAccount, choose);
+            ListCard(listAccount, chooseAccount);
 
-            if (listAccount[choose].listCard.Count == 0) { return; }
+            if (listAccount[chooseAccount].listCard.Count == 0) 
+            { 
+                return; 
+            }
 
-            int chooseCard = CWAR.ReadNumber(0, listAccount[choose].listCard.Count - 1);
-            listAccount[choose].listCard[chooseCard].Transfer(CWAR.WriteNameAccount(), CWAR.HowManyTransfer());
+            int chooseCard = consoleProvider.ReadNumber(0, listAccount[chooseAccount].listCard.Count - 1);
+            listAccount[chooseAccount].
+                listCard[chooseCard].
+                Transfer(consoleProvider.
+                WriteNameAccount(), consoleProvider.HowManyTransfer(ConsoleProvider.transferCash, ConsoleProvider.transferOnAccount));
         }
 
         //Вывод списка карт
-        public static void ListCard(List<Account> listAccount, int choose)
+        public static void ListCard(List<Account> listAccount, int chooseAccount)
         {
             CreditCard creditCard = new CreditCard();
-            string type;
-            int i = 0;
+            string typeCard;
+            int countCards = 0;
 
-            foreach (Card card in listAccount[choose].listCard)
+            foreach (Card card in listAccount[chooseAccount].listCard)
             {
-                if (card.GetType() == creditCard.GetType()) { type = "Credit"; }
-                else { type = "Debet"; }
+                if (card.GetType() == creditCard.GetType()) 
+                { 
+                    typeCard = creditTypeCard; 
+                }
+                else 
+                { 
+                    typeCard = debitTypeCard; 
+                }
 
-                Console.WriteLine($"{i} - {card.CardNumber} {type} {card.Balance}");
-                i++;
+                Console.WriteLine($"{countCards++} - {card.CardNumber} {typeCard} {card.Balance}");
             }
         }
 
         //Добавления карты
-        public static void AddCard(List<Account> listAccount, int choose)
+        public static void AddCard(List<Account> listAccount, int chooseAccount)
         {
-            switch (CWAR.ChooseCardType())
+            switch (consoleProvider.ChooseCardType())
             {
-                case 0: listAccount[choose].listCard.Add(new CreditCard()); break;
-                case 1: listAccount[choose].listCard.Add(new DebetCard()); break;
-                default: break;
+                case creditCard: 
+                    listAccount[chooseAccount].listCard.Add(new CreditCard()); 
+                    break;
+                case debitCard: 
+                    listAccount[chooseAccount].listCard.Add(new DebetCard()); 
+                    break;
+                default: 
+                    break;
             }
         }
 
         public Account()
         {
             Money = 1000;
+
             NumberAccount = NewRandom.CreateNumberAccount();
-            CWAR = new ConsoleWriteAndRead();
+            consoleProvider = new ConsoleProvider();
             listCard = new List<Card>();
         }
     }

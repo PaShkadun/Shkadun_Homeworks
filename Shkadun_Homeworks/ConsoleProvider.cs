@@ -2,7 +2,7 @@
 
 namespace Shkadun_Bank
 {
-    class ConsoleWriteAndRead
+    class ConsoleProvider
     {
         public const string INVALID_BALANCE = "Недостаточно средств";
         public const string INVALID_CARD = "Недостаточно карт";
@@ -12,29 +12,31 @@ namespace Shkadun_Bank
         public const string SUCCESSFUL = "Успешная операция";
         public const string CREDIT_INFO = "Введите сумму и кол-во месяцев кредита";
         public const string NOT_HAVE_CREDIT = "У вас нет кредитов по этой карте";
+        public const string putOn = "положить на";
+        public const string incorrectInput = "Некорректный ввод";
+        public const string chooseTypeCard = "Выберите тип: 0 кредитная, 1 - дебеторвая";
+        public const string chooseCard = "Выберите карту";
+        public const string pullCash = "Сколько хотите снять";
+        public const string transferCash = "Сколько хотите перевести на";
+        public const string transferOnCard = " карту";
+        public const string transferOnAccount = " счёт";
 
         public int ChooseCardType()
         {
-            Console.WriteLine("0 - кредитная, 1 - дебетовая");
+            Console.WriteLine(chooseTypeCard);
             return ReadNumber(0, 1);
         }
 
-        public int HowManyTransfer()
+        public int HowManyTransfer(string transferMessage, string whereTransfer = null)
         {
-            Console.WriteLine("Сколько хотите перевести на счёт?");
+            Console.WriteLine(transferMessage + whereTransfer);
             return ReadNumber();
-        }
+        }//
 
-        public int HowMany(string str = "положить на")
+        public int PayCredit(int limit)
         {
-            Console.WriteLine($"Сколько хотите {str} карту?");
-            return ReadNumber();
-        }
-
-        public int PayCredit(int i)
-        {
-            Console.WriteLine("Выберите карточку");
-            return ReadNumber(0, i);
+            Console.WriteLine(chooseCard);
+            return ReadNumber(0, limit);
         }
 
         public void SendMessage(string message)
@@ -42,37 +44,35 @@ namespace Shkadun_Bank
             Console.WriteLine(message);
         }
 
-        public void Clear()
-        {
-            Console.Clear();
-        }
         public int ReadNumber()
         {
             int read;
 
             while (!int.TryParse(Console.ReadLine(), out read)) ;
+
             return read;
         }
         public int ReadNumber(int min, int max)
         {
             int read;
+
             while (true)
             {
                 if (int.TryParse(Console.ReadLine(), out read))
                 {
                     if (read >= min && read <= max)
                     {
-                        Clear();
+                        Console.Clear();
                         return read;
                     }
                     else
                     {
-                        Console.WriteLine($"Недопустимое значение, диапазон {min}-{max}");
+                        Console.WriteLine($"{incorrectInput}, диапазон {min}-{max}");
                     }
                 }
                 else
                 {
-                    Console.WriteLine("Некорректный ввод");
+                    Console.WriteLine(incorrectInput);
                 }
             }
         }

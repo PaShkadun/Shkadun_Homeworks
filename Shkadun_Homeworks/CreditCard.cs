@@ -7,111 +7,122 @@ namespace Shkadun_Bank
     {
         public List<Credit> creditList;
 
-        public override void PullCash()     //Снятие средств
+        // Снятие средств
+        public override void PullCash()     
         {
-            if (!Credit.CheckCreditList(creditList) && Balance > 0) //Если неоплаченных кредитов нет и баланс положителен
+            // Если неоплаченных кредитов нет и баланс положителен
+            if (!Credit.CheckCreditList(creditList) && Balance > 0) 
             {
-                int howMany = CWAR.HowMany();   //Запрос ввода желаемой суммы
-                if (howMany <= Balance)          //Если недостаточно средств
+                int howManyPull = consoleProvider.HowManyTransfer(ConsoleProvider.pullCash);   
+
+                if (howManyPull <= Balance)
                 {
-                    Balance -= howMany;
-                    CWAR.SendMessage(ConsoleWriteAndRead.SUCCESSFUL);
+                    Balance -= howManyPull;
+
+                    consoleProvider.SendMessage(ConsoleProvider.SUCCESSFUL);
                 }
                 else
                 {
-                    CWAR.SendMessage(ConsoleWriteAndRead.INVALID_BALANCE);
+                    consoleProvider.SendMessage(ConsoleProvider.INVALID_BALANCE);
                 }
             }
             else
             {
-                CWAR.SendMessage(ConsoleWriteAndRead.NEGATIVE_CREDIT);
+                consoleProvider.SendMessage(ConsoleProvider.NEGATIVE_CREDIT);
             }
         }
 
-        public override void Transfer(CreditCard card)                  //Перевод на карту
+        public override void Transfer(CreditCard card) 
         {
-            if (!Credit.CheckCreditList(creditList) && Balance > 0)     //Если нет неоплаченных кредитов и баланс положителен
+            if (!Credit.CheckCreditList(creditList) && Balance > 0)
             {
-                int howMany = CWAR.HowMany();   //Запрос суммы
+                int howManyTransfer = consoleProvider.HowManyTransfer(ConsoleProvider.transferCash, ConsoleProvider.transferOnCard);
 
-                if (howMany <= Balance)         //Если средств достаточно
+                if (howManyTransfer <= Balance)
                 {
-                    Balance -= howMany;
-                    card.Balance += howMany;
-                    CWAR.SendMessage(ConsoleWriteAndRead.SUCCESSFUL);
+                    Balance -= howManyTransfer;
+                    card.Balance += howManyTransfer;
+
+                    consoleProvider.SendMessage(ConsoleProvider.SUCCESSFUL);
                 }
                 else
                 {
-                    CWAR.SendMessage(ConsoleWriteAndRead.INVALID_BALANCE);
+                    consoleProvider.SendMessage(ConsoleProvider.INVALID_BALANCE);
                 }
             }
             else
             {
-                CWAR.SendMessage(ConsoleWriteAndRead.NEGATIVE_CREDIT);
+                consoleProvider.SendMessage(ConsoleProvider.NEGATIVE_CREDIT);
             }
         }
 
-        public override void Transfer(string numberAccount, int howMany)    //Перевод на счёт
+        public override void Transfer(string numberAccount, int howManyTransfer)
         {
-            if (numberAccount.Length != 20)     //Если номер счёта короче 20 символов
+            if (numberAccount.Length != 20)
             {
-                CWAR.SendMessage(ConsoleWriteAndRead.INVALID_INPUT);
+                consoleProvider.SendMessage(ConsoleProvider.INVALID_INPUT);
+
                 return;
             }
 
-            Regex regex = new Regex(@"\w");                         //Разрешаем использовтаь только цифры и буквы
-            MatchCollection match = regex.Matches(numberAccount);   //Проверяем кол-во совпадений в строке
+            //Разрешаем использовтаь только цифры и буквы
+            Regex regex = new Regex(@"\w");
+            //Проверяем кол-во совпадений в строке
+            MatchCollection match = regex.Matches(numberAccount);   
 
-            if (match.Count != 20)  //Если их не 20, то строка некорректная
+            if (match.Count != 20)
             {
-                CWAR.SendMessage(ConsoleWriteAndRead.INVALID_INPUT);
+                consoleProvider.SendMessage(ConsoleProvider.INVALID_INPUT);
             }
-            else                    //Иначе
+            else 
             {
-                if (!Credit.CheckCreditList(creditList) && Balance > 0) //Если нет неоплаченных кредитов и баланс +
+                if (!Credit.CheckCreditList(creditList) && Balance > 0)
                 {
-                    if (howMany <= Balance) //И сумма меньше суммы на счёте
+                    if (howManyTransfer <= Balance)
                     {
-                        Balance -= howMany;
-                        CWAR.SendMessage(ConsoleWriteAndRead.SUCCESSFUL);
+                        Balance -= howManyTransfer;
+
+                        consoleProvider.SendMessage(ConsoleProvider.SUCCESSFUL);
                     }
                     else
                     {
-                        CWAR.SendMessage(ConsoleWriteAndRead.INVALID_BALANCE);
+                        consoleProvider.SendMessage(ConsoleProvider.INVALID_BALANCE);
                     }
                 }
                 else
                 {
-                    CWAR.SendMessage(ConsoleWriteAndRead.NEGATIVE_CREDIT);
+                    consoleProvider.SendMessage(ConsoleProvider.NEGATIVE_CREDIT);
                 }
             }
         }
 
-        public void AddCredit(int sum, int months)  //Добавить кредит
+        public void AddCredit(int creditSum, int months)
         {
-            if (!Credit.CheckCreditList(creditList)) //Если нет неоплаченных кредитов
+            if (!Credit.CheckCreditList(creditList))
             {
-                if (Balance >= 0)                    //И баланс > 0
+                if (Balance >= 0)
                 {
-                    Balance += sum;
-                    creditList.Add(new Credit(sum, months));
-                    CWAR.SendMessage(ConsoleWriteAndRead.SUCCESSFUL);
+                    Balance += creditSum;
+
+                    creditList.Add(new Credit(creditSum, months));
+                    consoleProvider.SendMessage(ConsoleProvider.SUCCESSFUL);
                 }
                 else
                 {
-                    CWAR.SendMessage(ConsoleWriteAndRead.NEGATIVE_CREDIT);
+                    consoleProvider.SendMessage(ConsoleProvider.NEGATIVE_CREDIT);
                 }
             }
             else
             {
-                CWAR.SendMessage(ConsoleWriteAndRead.NEGATIVE_CREDIT);
+                consoleProvider.SendMessage(ConsoleProvider.NEGATIVE_CREDIT);
             }
         }
 
         public CreditCard()
         {
             Balance = 0;
-            CWAR = new ConsoleWriteAndRead();
+
+            consoleProvider = new ConsoleProvider();
             creditList = new List<Credit>();
             CardNumber = NewRandom.RandomCardNumber();
         }
