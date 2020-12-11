@@ -2,7 +2,7 @@
 
 namespace Shkadun_Bank
 {
-    class DebetCard : Card
+    public class DebetCard : Card
     {
         public override void PullCash()
         {

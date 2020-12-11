@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 
 namespace Shkadun_Bank
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             List<Account> listAccounts = new List<Account>();
             ConsoleProvider consoleProvider = new ConsoleProvider();

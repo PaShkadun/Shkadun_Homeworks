@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace Shkadun_Bank
 {
-    class CreditCard : Card
+    public class CreditCard : Card
     {
         public List<Credit> creditList;
 

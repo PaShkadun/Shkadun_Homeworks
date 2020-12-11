@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Shkadun_Bank
 {
-    class Account
+    public class Account
     {
         private const string debitTypeCard = "Дебетовая";
         private const string creditTypeCard = "Кредитная";

@@ -2,7 +2,7 @@
 
 namespace Shkadun_Bank
 {
-    class Credit
+    public class Credit
     {
         public int CreditRate { get; private set; }
         public int Months { get; set; }
@@ -10,7 +10,7 @@ namespace Shkadun_Bank
         public int Sum { get; set; }
 
         // Проверка кредитов по картам(вызывается при попытке перевода, попытке взять кредит)
-        internal static bool CheckCreditList(List<Credit> creditList)
+        public static bool CheckCreditList(List<Credit> creditList)
         {
             bool negativeCredit = false;
 

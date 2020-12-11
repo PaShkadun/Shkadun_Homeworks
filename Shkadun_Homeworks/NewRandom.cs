@@ -2,7 +2,7 @@
 
 namespace Shkadun_Bank
 {
-    class NewRandom
+    public class NewRandom
     {
         private static Random random = new Random();
 

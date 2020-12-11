@@ -2,7 +2,7 @@
 
 namespace Shkadun_Bank
 {
-    class ConsoleProvider
+    public class ConsoleProvider
     {
         public const string INVALID_BALANCE = "Недостаточно средств";
         public const string INVALID_CARD = "Недостаточно карт";

@@ -1,7 +1,7 @@
 ﻿
 namespace Shkadun_Bank
 {
-    abstract class Card
+    public abstract class Card
     {
         public int Balance { get; set; }
         public long CardNumber { get; protected set; }
