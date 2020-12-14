@@ -1,96 +1,110 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 
 namespace Shkadun_Bank
 {
-    public class ConsoleProvider
+    public static class ConsoleProvider
     {
-        public const string INVALID_BALANCE = "Недостаточно средств";
-        public const string INVALID_CARD = "Недостаточно карт";
-        public const string BLOCKING_OPERATION = "Недоступная операция";
-        public const string INVALID_INPUT = "Некорректный ввод";
-        public const string NEGATIVE_CREDIT = "Отказано. Имеется задолженность по кредиту или баланс отрицателен.";
-        public const string SUCCESSFUL = "Успешная операция";
-        public const string CREDIT_INFO = "Введите сумму и кол-во месяцев кредита";
-        public const string NOT_HAVE_CREDIT = "У вас нет кредитов по этой карте";
-        public const string putOn = "положить на";
-        public const string incorrectInput = "Некорректный ввод";
-        public const string chooseTypeCard = "Выберите тип: 0 кредитная, 1 - дебеторвая";
-        public const string chooseCard = "Выберите карту";
-        public const string pullCash = "Сколько хотите снять";
-        public const string transferCash = "Сколько хотите перевести на";
-        public const string transferOnCard = " карту";
-        public const string transferOnAccount = " счёт";
+        public const string incorrectInput = "Incorrect input. ";
+        public const string lackingMoney = "You haven't money";
+        public const string possibleValue = "Possible values 0-";
+        public const string inputValue = "Input int value ";
+        public const string actionsBank = "1. New Account\n2. Add cash on Account\n" +
+                                          "3. Delete Account\n4. Show all accounts" +
+                                          "\n5. Manage cards\n6. Show bank balance\n7. Show account balance\n0. Exit";
+        public const string actionsCards= "1. Add card\n2. Delete card\n3. Choose card";
+        public const string operationsCreditCard = "1. Transfer to card\n2. Transfer to account\n3. Add credit" +
+                                                  "\n4. Pay credit\n5. Show credits\n6. Spend money";
+        public const string operationsDebitCard = "1. Transfer to account\n2. Transfer to card\n3. Spend money";
+        public const string successfullyOperation = "Successfully";
+        public const string typesCard = "0 - Debet, 1 - Credit";
+        public const string haveCredit = "You have credit.";
+        public const string haveNotCredit = "You haven't credit";
+        public const string creditPaid = "This credit paid out";
+        public const string haveNegativeCredit = "You have debt credit(s)";
+        public const string haveNotNegativeCredit = "You haven't debt credit";
+        public const string noneCardOnAccount = "This account hasn't cards";
+        public const string incorrectOperation = "This operation is block";
+        public const string inputName = "Input recepient names";
+        public const string inputRecepientAccounts = "Input number recepients account";
 
-        public int ChooseCardType()
-        {
-            Console.WriteLine(chooseTypeCard);
-            return ReadNumber(0, 1);
-        }
-
-        public int HowManyTransfer(string transferMessage, string whereTransfer = null)
-        {
-            Console.WriteLine(transferMessage + whereTransfer);
-            return ReadNumber();
-        }//
-
-        public int PayCredit(int limit)
-        {
-            Console.WriteLine(chooseCard);
-            return ReadNumber(0, limit);
-        }
-
-        public void SendMessage(string message)
+        public static void ShowMessage(string message)
         {
             Console.WriteLine(message);
         }
 
-        public int ReadNumber()
+        public static int ChooseActions(string message, int maxValue)
         {
-            int read;
+            Console.WriteLine(message);
 
-            while (!int.TryParse(Console.ReadLine(), out read)) ;
-
-            return read;
+            return ReadChoose(maxValue);
         }
-        public int ReadNumber(int min, int max)
-        {
-            int read;
 
-            while (true)
+        public static int ReadChoose(int maxValue, string message = null)
+        {
+            int choose;
+            
+            if(message != null)
             {
-                if (int.TryParse(Console.ReadLine(), out read))
+                Console.WriteLine(message);
+            }
+
+            while(true)
+            {
+                if (int.TryParse(Console.ReadLine(), out choose) && choose >= 0 && choose <= maxValue)
                 {
-                    if (read >= min && read <= max)
-                    {
-                        Console.Clear();
-                        return read;
-                    }
-                    else
-                    {
-                        Console.WriteLine($"{incorrectInput}, диапазон {min}-{max}");
-                    }
+                    return choose;
                 }
                 else
                 {
-                    Console.WriteLine(incorrectInput);
+                    Console.WriteLine(incorrectInput + possibleValue + maxValue);
                 }
             }
         }
 
-        public int WhatDo()
+        public static int InputValue()
         {
-            Console.WriteLine("\nЧто дальше?\n0. Создать счёт\n1. Добавить карту\n2. Список карт" +
-                              "\n3. Пополнить карту\n4. Снять с карты\n5. Перевести на карту\n" +
-                              "6. Перевести на счёт\n7. Взять кредит\n8. Погасить кредит");
-            return ReadNumber(0, 8);
+            Console.WriteLine(inputValue);
+
+            int sum;
+
+            while (!int.TryParse(Console.ReadLine(), out sum)) ;
+
+            return sum;
         }
 
-        public string WriteNameAccount()
+        public static string InputStringValue()
         {
-            Console.WriteLine("Введите ФИО получателя");
-            Console.ReadLine();
-            Console.WriteLine("Введите номер счёта получателя(буквы + цифры)");
-            return Console.ReadLine();
+            Console.WriteLine(inputName);
+
+            string name;
+
+            while ((name = Console.ReadLine()) != null) ;
+
+            return name;
+        }
+
+        public static string InputNumberAccount()
+        {
+            Console.WriteLine(inputRecepientAccounts);
+
+            string numberAccount;
+
+            while ((numberAccount = Console.ReadLine()) == null) ;
+
+            Regex regex = new Regex(@"\w");
+            MatchCollection matchCollection = regex.Matches(numberAccount);
+
+            if(matchCollection.Count != 20)
+            {
+                Bank.showMessage(incorrectInput);
+
+                return incorrectInput;
+            }
+            else
+            {
+                return numberAccount;
+            }
         }
     }
 }

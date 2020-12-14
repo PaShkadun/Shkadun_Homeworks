@@ -6,7 +6,7 @@ namespace Shkadun_Bank
     {
         private static Random random = new Random();
 
-        public static string CreateNumberAccount()  //Генерация номера счёта
+        public static string CreateNumberAccount()
         {
             //Разрешённые символы
             char[] accessSymbols = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
@@ -23,7 +23,7 @@ namespace Shkadun_Bank
             return numberAccount;
         }
 
-        public static long RandomCardNumber()   //Генерация номера карты
+        public static string RandomCardNumber()
         {
             string numberCard = "";
             //Разрешённые символы
@@ -34,7 +34,7 @@ namespace Shkadun_Bank
                 numberCard += accessSymbols[random.Next(0, accessSymbols.Length - 1)];
             }
 
-            return long.Parse(numberCard);
+            return numberCard;
         }
     }
 }

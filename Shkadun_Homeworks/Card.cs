@@ -1,35 +1,45 @@
-﻿
-namespace Shkadun_Bank
+﻿namespace Shkadun_Bank
 {
     public abstract class Card
     {
         public int Balance { get; set; }
-        public long CardNumber { get; protected set; }
+        public string CardNumber { get; protected set; }
+        abstract public TypeCard Type { get; }
 
-        protected ConsoleProvider consoleProvider;
+        public abstract void TransferToCard();
 
-        abstract public void Transfer(CreditCard card);
-
-        abstract public void Transfer(string NumberAccount, int howManySpend);
-
-        //Положить средства на карту
-        public bool AddCash(int howManySpend, int accountMoney)
-        {  
-            //Если средств недостаточно
-            if (howManySpend > accountMoney)
+        public void TransferToAccount(string accountNumber, int sum)
+        {
+            if (accountNumber != ConsoleProvider.incorrectInput)
             {
-                consoleProvider.SendMessage(ConsoleProvider.INVALID_BALANCE);
+                if (sum > Balance)
+                {
+                    Bank.showMessage(ConsoleProvider.lackingMoney);
+                }
+                else
+                {
+                    Balance -= sum;
 
-                return false;
-            }
-            else
-            {
-                consoleProvider.SendMessage(ConsoleProvider.SUCCESSFUL);
-
-                return true;
+                    Bank.showMessage(ConsoleProvider.successfullyOperation);
+                }
             }
         }
 
-        abstract public void PullCash();
+        public void SpendMoney()
+        {
+            int money = ConsoleProvider.InputValue();
+
+            if (money > Balance)
+            {
+                Bank.showMessage(ConsoleProvider.lackingMoney);
+            }
+            else
+            {
+                Balance -= money;
+                Bank.showMessage(ConsoleProvider.successfullyOperation);
+            }
+        }
+
+        public abstract void ChooseOperation();
     }
 }

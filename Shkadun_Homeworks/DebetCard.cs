@@ -1,98 +1,82 @@
-﻿using System.Text.RegularExpressions;
-
-namespace Shkadun_Bank
+﻿namespace Shkadun_Bank
 {
     public class DebetCard : Card
     {
-        public override void PullCash()
-        {
-            int howManyPull = consoleProvider.HowManyTransfer(ConsoleProvider.pullCash);
+        private const int possibleCountActions = 3;
 
-            if (howManyPull > Balance)
-            {
-                consoleProvider.SendMessage(ConsoleProvider.INVALID_BALANCE);
-            }
-            else
-            {
-                Balance -= howManyPull;
-
-                consoleProvider.SendMessage(ConsoleProvider.SUCCESSFUL);
-            }
-        }
-
-        public void Transfer(DebetCard card)
-        {
-            int howManyTransfer = consoleProvider.HowManyTransfer(ConsoleProvider.transferCash, ConsoleProvider.transferOnCard);
-
-            if (howManyTransfer > Balance)  //Если средств недостаточно
-            {
-                consoleProvider.SendMessage(ConsoleProvider.INVALID_BALANCE);
-            }
-            else
-            {
-                Balance -= howManyTransfer;
-                card.Balance += howManyTransfer;
-
-                consoleProvider.SendMessage(ConsoleProvider.SUCCESSFUL);
-            }
-        }
-
-        public override void Transfer(string numberAccount, int howManyTransfer)
-        {
-            if (numberAccount.Length != 20)
-            {
-                consoleProvider.SendMessage(ConsoleProvider.INVALID_INPUT);
-
-                return;
-            }
-
-            //Разрешаем только цифры и буквы
-            Regex regex = new Regex(@"\w");
-            //Считаем кол-во совпадений
-            MatchCollection match = regex.Matches(numberAccount);   
-
-            if (match.Count != 20)
-            {
-                consoleProvider.SendMessage(ConsoleProvider.INVALID_INPUT);
-            }
-            else
-            {
-                if (howManyTransfer > Balance)
-                {
-                    consoleProvider.SendMessage(ConsoleProvider.INVALID_BALANCE);
-                }
-                else
-                {
-                    Balance -= howManyTransfer;
-
-                    consoleProvider.SendMessage(ConsoleProvider.SUCCESSFUL);
-                }
-            }
-        }
-
-        public override void Transfer(CreditCard card)  //Перевод на кредитную карту
-        {
-            int howManyTransfer = consoleProvider.HowManyTransfer(ConsoleProvider.transferCash, ConsoleProvider.transferOnCard);
-
-            if (howManyTransfer > Balance)
-            {
-                consoleProvider.SendMessage(ConsoleProvider.INVALID_BALANCE);
-            }
-            else
-            {
-                Balance -= howManyTransfer;
-                card.Balance += howManyTransfer;
-
-                consoleProvider.SendMessage(ConsoleProvider.SUCCESSFUL);
-            }
-        }
+        public override TypeCard Type { get; }
 
         public DebetCard()
         {
             Balance = 0;
-
+            Type = TypeCard.Debit;
             CardNumber = NewRandom.RandomCardNumber();
-            consoleProvider = new ConsoleProvider();
+        }
+
+        public override void TransferToCard()
+        {
+            Bank.ShowAccounts();
+
+            int chooseAccount = ConsoleProvider.ReadChoose(Bank.accounts.Count);
+            
+            if (Bank.accounts[chooseAccount].cards.Count == 0)
+            {
+                Bank.showMessage(ConsoleProvider.noneCardOnAccount);
+
+                return;
+            }
+
+            Bank.accounts[chooseAccount].Showcards();
+
+            int chooseCard = ConsoleProvider.ReadChoose(Bank.accounts[chooseAccount].cards.Count);
+            Card card = Bank.accounts[chooseAccount].cards[chooseCard];
+
+            int money = ConsoleProvider.InputValue();
+
+            if (money > card.Balance)
+            {
+                Bank.showMessage(ConsoleProvider.lackingMoney);
+            }
+            else
+            {
+                if (card == this)
+                {
+                    Bank.showMessage(ConsoleProvider.incorrectOperation);
+                }
+
+                card.Balance += money;
+                Balance -= money;
+
+                Bank.showMessage(ConsoleProvider.successfullyOperation);
+            }
+        }
+
+        public override void ChooseOperation()
+        {
+            Bank.showMessage(ConsoleProvider.operationsDebitCard);
+
+            switch(ConsoleProvider.ReadChoose(possibleCountActions))
+            {
+                case 1:
+                    string numberAccount = ConsoleProvider.InputNumberAccount();
+
+                    if(numberAccount != ConsoleProvider.incorrectInput)
+                    {
+                        TransferToAccount(
+                                numberAccount,
+                                ConsoleProvider.InputValue()
+                            );
+                    }
+                    break;
+
+                case 2:
+                    TransferToCard();
+                    break;
+
+                case 3: 
+                    SpendMoney();
+                    break;
+            }
         }
     }
 }

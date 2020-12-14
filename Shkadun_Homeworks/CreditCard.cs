@@ -1,130 +1,240 @@
-﻿using System.Collections.Generic;
-using System.Text.RegularExpressions;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Shkadun_Bank
 {
     public class CreditCard : Card
     {
-        public List<Credit> creditList;
+        private const string addCreditInfo = "Input credit info(monthes, sum)";
+        private const string chargeCredit = "Charge sum ";
+        private const string chargeNumberCredit = " | credit number #";
 
-        // Снятие средств
-        public override void PullCash()     
+        private const int possibleCountActions = 6;
+
+        public override TypeCard Type { get; }
+
+        public List<Credit> credits;
+
+        public CreditCard()
         {
-            // Если неоплаченных кредитов нет и баланс положителен
-            if (!Credit.CheckCreditList(creditList) && Balance > 0) 
-            {
-                int howManyPull = consoleProvider.HowManyTransfer(ConsoleProvider.pullCash);   
+            credits = new List<Credit>();
+            Balance = 0;
+            Type = TypeCard.Credit;
+            CardNumber = NewRandom.RandomCardNumber();
+        }
 
-                if (howManyPull <= Balance)
-                {
-                    Balance -= howManyPull;
-
-                    consoleProvider.SendMessage(ConsoleProvider.SUCCESSFUL);
-                }
-                else
-                {
-                    consoleProvider.SendMessage(ConsoleProvider.INVALID_BALANCE);
-                }
-            }
-            else
+        public void ChargeCredit()
+        {
+            if(credits.Count != 0)
             {
-                consoleProvider.SendMessage(ConsoleProvider.NEGATIVE_CREDIT);
+                int numberCredit = 0;
+
+                foreach(var credit in credits)
+                {
+                    if (credit.Monthes != 0)
+                    {
+                        credit.monthesDebt++;
+                        credit.Monthes--;
+
+                        Bank.showMessage(chargeCredit + credit.creditSum + chargeNumberCredit + numberCredit++);
+                    }
+                }
             }
         }
 
-        public override void Transfer(CreditCard card) 
+        public override void ChooseOperation()
         {
-            if (!Credit.CheckCreditList(creditList) && Balance > 0)
-            {
-                int howManyTransfer = consoleProvider.HowManyTransfer(ConsoleProvider.transferCash, ConsoleProvider.transferOnCard);
+            Bank.showMessage(ConsoleProvider.operationsCreditCard);
 
-                if (howManyTransfer <= Balance)
-                {
-                    Balance -= howManyTransfer;
-                    card.Balance += howManyTransfer;
-
-                    consoleProvider.SendMessage(ConsoleProvider.SUCCESSFUL);
-                }
-                else
-                {
-                    consoleProvider.SendMessage(ConsoleProvider.INVALID_BALANCE);
-                }
-            }
-            else
+            switch(ConsoleProvider.ReadChoose(possibleCountActions - 1))
             {
-                consoleProvider.SendMessage(ConsoleProvider.NEGATIVE_CREDIT);
+                case 1:
+                    Bank.ShowAccounts();
+                    TransferToCard();
+                    break;
+
+                case 2:
+                    string numberAccount = ConsoleProvider.InputNumberAccount();
+
+                    if (numberAccount != ConsoleProvider.incorrectInput)
+                    {
+                        TransferToAccount(
+                                numberAccount,
+                                ConsoleProvider.InputValue()
+                            );
+                    }
+                    break;
+
+                case 3:
+                    AddCredit();
+                    break;
+
+                case 4:
+                    if(CheckDebtCredits())
+                    {
+                        Bank.showMessage(ConsoleProvider.haveNotNegativeCredit);
+                    }
+                    else
+                    {
+                        ShowAllCredit();
+
+                        if(credits.Count != 0)
+                        {
+                            PayCredit(credits[ConsoleProvider.ReadChoose(credits.Count - 1)]);
+                        }
+                    }
+                    break;
+
+                case 5:
+                    ShowAllCredit();
+                    break;
+
+                case 6:
+                    SpendMoney();
+                    break;
             }
         }
 
-        public override void Transfer(string numberAccount, int howManyTransfer)
+        public override void TransferToCard()
         {
-            if (numberAccount.Length != 20)
+            Bank.ShowAccounts();
+
+            int chooseAccount = ConsoleProvider.ReadChoose(Bank.accounts.Count - 1);
+
+            if (Bank.accounts[chooseAccount].cards.Count == 0)
             {
-                consoleProvider.SendMessage(ConsoleProvider.INVALID_INPUT);
+                Bank.showMessage(ConsoleProvider.noneCardOnAccount);
 
                 return;
             }
 
-            //Разрешаем использовтаь только цифры и буквы
-            Regex regex = new Regex(@"\w");
-            //Проверяем кол-во совпадений в строке
-            MatchCollection match = regex.Matches(numberAccount);   
+            Bank.accounts[chooseAccount].Showcards();
 
-            if (match.Count != 20)
+            int chooseCard = ConsoleProvider.ReadChoose(Bank.accounts[chooseAccount].cards.Count);
+            Card card = Bank.accounts[chooseAccount].cards[chooseCard];
+
+            if (card.Type == TypeCard.Debit)
             {
-                consoleProvider.SendMessage(ConsoleProvider.INVALID_INPUT);
-            }
-            else 
-            {
-                if (!Credit.CheckCreditList(creditList) && Balance > 0)
-                {
-                    if (howManyTransfer <= Balance)
-                    {
-                        Balance -= howManyTransfer;
-
-                        consoleProvider.SendMessage(ConsoleProvider.SUCCESSFUL);
-                    }
-                    else
-                    {
-                        consoleProvider.SendMessage(ConsoleProvider.INVALID_BALANCE);
-                    }
-                }
-                else
-                {
-                    consoleProvider.SendMessage(ConsoleProvider.NEGATIVE_CREDIT);
-                }
-            }
-        }
-
-        public void AddCredit(int creditSum, int months)
-        {
-            if (!Credit.CheckCreditList(creditList))
-            {
-                if (Balance >= 0)
-                {
-                    Balance += creditSum;
-
-                    creditList.Add(new Credit(creditSum, months));
-                    consoleProvider.SendMessage(ConsoleProvider.SUCCESSFUL);
-                }
-                else
-                {
-                    consoleProvider.SendMessage(ConsoleProvider.NEGATIVE_CREDIT);
-                }
+                Bank.showMessage(ConsoleProvider.incorrectOperation);
             }
             else
             {
-                consoleProvider.SendMessage(ConsoleProvider.NEGATIVE_CREDIT);
+                int money = ConsoleProvider.InputValue();
+                
+                if(money > card.Balance)
+                {
+                    Bank.showMessage(ConsoleProvider.lackingMoney);
+                }
+                else
+                {
+                    if(card == this)
+                    {
+                        Bank.showMessage(ConsoleProvider.incorrectOperation);
+                    }
+
+                    card.Balance += money;
+                    Balance -= money;
+
+                    Bank.showMessage(ConsoleProvider.successfullyOperation);
+                }
             }
         }
 
-        public CreditCard()
+        public void PayCredit(Credit credit)
         {
-            Balance = 0;
+            if(credit.creditSum > Balance)
+            {
+                Bank.showMessage(ConsoleProvider.lackingMoney);
+            }
+            else
+            {
+                Balance -= credit.creditSum;
+                credit.monthesDebt = 0;
 
-            consoleProvider = new ConsoleProvider();
-            creditList = new List<Credit>();
-            CardNumber = NewRandom.RandomCardNumber();
+                if(credit.monthesDebt == 0 && credit.Monthes == 0)
+                {
+                    Bank.showMessage(ConsoleProvider.creditPaid);
+
+                    for(int numberCredit = 0; numberCredit < credits.Count; numberCredit++)
+                    {
+                        if(credit == credits[numberCredit])
+                        {
+                            credits.RemoveAt(numberCredit);
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    Bank.showMessage(ConsoleProvider.successfullyOperation);
+                }
+            }
+        }
+
+        public void AddCredit()
+        {
+            if (CheckDebtCredits())
+            {
+                Bank.showMessage(addCreditInfo);
+                credits.Add(new Credit(ConsoleProvider.InputValue(), ConsoleProvider.InputValue()));
+                Bank.showMessage(ConsoleProvider.successfullyOperation);
+            }
+            else
+            {
+                Bank.showMessage(ConsoleProvider.haveNegativeCredit);
+            }
+        }
+
+        public void ShowAllCredit()
+        {
+            if(credits.Count == 0)
+            {
+                Bank.showMessage(ConsoleProvider.haveNotCredit);
+            }
+            else
+            {
+                int countCredit = 0;
+
+                foreach(var credit in credits)
+                {
+                    Console.WriteLine($"{countCredit++}. {credit.creditSum * credit.monthesDebt}");
+                }
+            }
+        }
+
+        public bool CheckDebtCredits()
+        {
+            if(credits.Count == 0)
+            {
+                return true;
+            }
+            else
+            {
+                bool haveDebt = false;
+
+                foreach(var credit in credits)
+                {
+                    if(credit.monthesDebt > 0)
+                    {
+                        haveDebt = true;
+                        break;
+                    }
+                }
+
+                return !haveDebt;
+            }
+        }
+
+        public bool CheckCredits()
+        {
+            if (credits.Count == 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

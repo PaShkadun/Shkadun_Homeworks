@@ -1,37 +1,25 @@
-﻿using System.Collections.Generic;
-
-namespace Shkadun_Bank
+﻿namespace Shkadun_Bank
 {
     public class Credit
     {
-        public int CreditRate { get; private set; }
-        public int Months { get; set; }
-        public int MonthsOfDebt { get; set; }
-        public int Sum { get; set; }
+        public const int CreditRate = 20;
 
-        // Проверка кредитов по картам(вызывается при попытке перевода, попытке взять кредит)
-        public static bool CheckCreditList(List<Credit> creditList)
+        public int Monthes { get; set; }
+
+        public readonly int creditSum;
+        public int monthesDebt;
+
+        public Credit(int monthes, int sum)
         {
-            bool negativeCredit = false;
-
-            foreach (Credit credit in creditList)
-            {
-                if (credit.MonthsOfDebt > 0) 
-                { 
-                    negativeCredit = true; 
-                    break; 
-                } 
-                // Если нашло непогашенный, преркащает искать
-            }
-
-            return negativeCredit;
+            monthesDebt = 0;
+            Monthes = monthes;
+            creditSum = ((sum * 120) / 100);
         }
 
-        public Credit(int creditRate, int months)
+        public void PayCredit()
         {
-            CreditRate = (120 * creditRate / 100) / months;
-            Months = months;
-            MonthsOfDebt = 0;
+            Monthes -= monthesDebt;
+            monthesDebt = 0;
         }
     }
 }
