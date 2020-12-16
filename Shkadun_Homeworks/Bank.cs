@@ -7,29 +7,19 @@ namespace Shkadun_Bank
 {
     public static class Bank
     {
-        public delegate void ShowMessage(string message);
-
-        private const string accountBalance = ", sum = ";
-        private const string accountNumber = "Number = ";
-        private const string noneAccount = "You haven't accounts";
-        private const string chooseAccount = "Choose account";
-        private const string chooseCard = "Choose card";
-        private const string messageBalance = "You balance = ";
-
+        public delegate void ShowMessages(string message);
         private const int startMoney = 2500;
         private const int possibleCountActions = 7;
-        private const int possibleCountActionsCard = 3;
-        private const int typesOfCard = 2;
 
-        public static List<Account> accounts;
-        public static int money;
-        public static ShowMessage showMessage;
+        public static List<Account> Accounts;
+        public static int Money;
+        public static ShowMessages ShowMessage;
 
-        static Bank() {
-            accounts = new List<Account>();
-            money = startMoney;
-
-            showMessage += ConsoleProvider.ShowMessage;
+        static Bank() 
+        {
+            Accounts = new List<Account>();
+            Money = startMoney;
+            ShowMessage += ConsoleProvider.ShowMessage;
         }
 
         public static void CreateTimer()
@@ -46,9 +36,9 @@ namespace Shkadun_Bank
 
         public static void CheckCredits()
         {
-            foreach (var account in accounts)
+            foreach (Account account in Accounts)
             {
-                foreach (var card in account.cards)
+                foreach (Card card in account.Cards)
                 {
                     if (card.Type == TypeCard.Credit)
                     {
@@ -58,118 +48,78 @@ namespace Shkadun_Bank
             }
         }
 
-        public static void ManageCards(int accountIndex) 
-        {
-            switch(ConsoleProvider.ChooseActions(ConsoleProvider.actionsCards, possibleCountActionsCard))
-            {
-                case 1:
-                    showMessage(ConsoleProvider.typesCard);
-
-                    if(ConsoleProvider.ReadChoose(typesOfCard) == (int)TypeCard.Credit)
-                    {
-                        accounts[accountIndex].cards.Add(new CreditCard());
-                    }
-                    else
-                    {
-                        accounts[accountIndex].cards.Add(new DebetCard());
-                    }
-
-                    showMessage(ConsoleProvider.successfullyOperation);
-                    break;
-
-                case 2:
-                    accounts[accountIndex].Showcards();
-
-                    if (accounts[accountIndex].cards.Count != 0)
-                    {
-                        accounts[accountIndex].DeleteCard();
-                    }
-                    break;
-
-                case 3:
-                    accounts[accountIndex].Showcards();
-
-                    if(accounts[accountIndex].cards.Count != 0)
-                    {
-                        accounts[accountIndex].
-                            cards[ConsoleProvider.ReadChoose(accounts[accountIndex].cards.Count, chooseCard)].
-                            ChooseOperation();
-                    }
-                    break;
-            }
-
-        }
-
         public static void AddAccount()
         {
-            accounts.Add(new Account());
-            showMessage(ConsoleProvider.successfullyOperation);
+            Accounts.Add(new Account());
+            ShowMessage(ConsoleProvider.SuccessfullyOperation);
         }
 
         public static void ShowAccounts()
         {
-            if(accounts.Count == 0)
+            if (Accounts.Count == 0)
             {
-                showMessage(noneAccount);
+                ShowMessage(ConsoleProvider.NoneAccount);
 
                 return;
             }
 
-            int countCard = 0;
+            var countCard = 0;
 
-            foreach(var account in accounts)
+            foreach (Account account in Accounts)
             {
-                Console.WriteLine(countCard++ + " " + accountNumber + account.ID + accountBalance + account.Money);
+                Console.WriteLine(countCard++ + " " + ConsoleProvider.AccountNumber + account.Id + ConsoleProvider.AccountBalance + account.Money);
             }
         }
 
         public static void DeleteAccount(int accountIndex)
         {
-            bool haveDebt = false;
+            var creditDebt = false;
 
-            foreach(var card in accounts[accountIndex].cards)
+            foreach (Card card in Accounts[accountIndex].Cards)
             {
-                if(card.Type == TypeCard.Credit)
+                if (card.Type == TypeCard.Credit)
                 {
-                    if(!((CreditCard)card).CheckCredits())
+                    if (!((CreditCard)card).CheckCredits())
                     {
-                        haveDebt = true;
+                        creditDebt = true;
                         break;
                     }
                 }
             }
 
-            if(!haveDebt)
+            if (!creditDebt)
             {
-                accounts.RemoveAt(accountIndex);
-                showMessage(ConsoleProvider.successfullyOperation);
+                Accounts.RemoveAt(accountIndex);
+                ShowMessage(ConsoleProvider.SuccessfullyOperation);
             }
             else
             {
-                showMessage(ConsoleProvider.haveCredit);
+                ShowMessage(ConsoleProvider.HaveCredit);
             }
         }
 
         public static void AddCashOnAccount(int accountIndex, int sum)
         {
-            if(sum > money)
+            if (sum > Money)
             {
-                showMessage(ConsoleProvider.lackingMoney);
+                ShowMessage(ConsoleProvider.LackingMoney);
             }
             else
             {
-                accounts[accountIndex].Money += sum;
-                money -= sum;
+                Accounts[accountIndex].Money += sum;
+                Money -= sum;
             }
         }
 
         public static void Start()
         {
-            bool over = false;
+            var over = false;
 
-            while(!over)
+            while (!over)
             {
-                switch(ConsoleProvider.ChooseActions(ConsoleProvider.actionsBank, possibleCountActions))
+                Console.Clear();
+
+                switch (ConsoleProvider.ChooseActions(ConsoleProvider.ActionsBank, possibleCountActions))
                 {
                     case 1:
                         AddAccount();
@@ -178,19 +128,18 @@ namespace Shkadun_Bank
                     case 2:
                         ShowAccounts();
 
-                        if (accounts.Count != 0)
+                        if (Accounts.Count != 0)
                         { 
-                            AddCashOnAccount(ConsoleProvider.ReadChoose(accounts.Count - 1, chooseAccount),
-                                             ConsoleProvider.InputValue());
+                            AddCashOnAccount(ConsoleProvider.ReadChoose(Accounts.Count - 1, ConsoleProvider.ChooseAccount), ConsoleProvider.InputIntegerValue());
                         }
                         break;
 
                     case 3:
                         ShowAccounts();
 
-                        if (accounts.Count != 0)
+                        if (Accounts.Count != 0)
                         {
-                            DeleteAccount(ConsoleProvider.ReadChoose(accounts.Count - 1, chooseAccount));
+                            DeleteAccount(ConsoleProvider.ReadChoose(Accounts.Count - 1, ConsoleProvider.ChooseAccount));
                         }
                         break;
 
@@ -201,19 +150,19 @@ namespace Shkadun_Bank
                     case 5:
                         ShowAccounts();
 
-                        if(accounts.Count != 0)
+                        if (Accounts.Count != 0)
                         {
-                            ManageCards(ConsoleProvider.ReadChoose(accounts.Count - 1, chooseAccount));
+                            Accounts[ConsoleProvider.ReadChoose(Accounts.Count - 1, ConsoleProvider.ChooseAccount)].ManageCards();
                         }
                         break;
 
                     case 6:
-                        showMessage(messageBalance + money);
+                        ShowMessage(ConsoleProvider.MessageBalance + Money);
                         break;
 
                     case 7:
                         ShowAccounts();
-                        showMessage(messageBalance + accounts[ConsoleProvider.ReadChoose(accounts.Count - 1)].Money);
+                        ShowMessage(ConsoleProvider.MessageBalance + Accounts[ConsoleProvider.ReadChoose(Accounts.Count - 1)].Money);
                         break;
 
                     case 0:
@@ -223,6 +172,9 @@ namespace Shkadun_Bank
                     default:
                         break;
                 }
+
+                // Нужен, чтобы можно было увидеть сообщение после совершения какого-либо действия
+                Thread.Sleep(500);
             }
         }
     }

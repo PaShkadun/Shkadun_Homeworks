@@ -10,67 +10,64 @@
         {
             Balance = 0;
             Type = TypeCard.Debit;
-            CardNumber = NewRandom.RandomCardNumber();
+            CardNumber = CustomRandom.RandomCardNumber();
         }
 
-        public override void TransferToCard()
+        public override void TransferMoneyToCard()
         {
             Bank.ShowAccounts();
 
-            int chooseAccount = ConsoleProvider.ReadChoose(Bank.accounts.Count);
+            int chooseAccount = ConsoleProvider.ReadChoose(Bank.Accounts.Count);
             
-            if (Bank.accounts[chooseAccount].cards.Count == 0)
+            if (Bank.Accounts[chooseAccount].Cards.Count == 0)
             {
-                Bank.showMessage(ConsoleProvider.noneCardOnAccount);
+                Bank.ShowMessage(ConsoleProvider.NoneCardOnAccount);
 
                 return;
             }
 
-            Bank.accounts[chooseAccount].Showcards();
+            Bank.Accounts[chooseAccount].ShowCards();
 
-            int chooseCard = ConsoleProvider.ReadChoose(Bank.accounts[chooseAccount].cards.Count);
-            Card card = Bank.accounts[chooseAccount].cards[chooseCard];
+            int chooseCard = ConsoleProvider.ReadChoose(Bank.Accounts[chooseAccount].Cards.Count);
+            Card card = Bank.Accounts[chooseAccount].Cards[chooseCard];
 
-            int money = ConsoleProvider.InputValue();
+            int money = ConsoleProvider.InputIntegerValue();
 
             if (money > card.Balance)
             {
-                Bank.showMessage(ConsoleProvider.lackingMoney);
+                Bank.ShowMessage(ConsoleProvider.LackingMoney);
             }
             else
             {
                 if (card == this)
                 {
-                    Bank.showMessage(ConsoleProvider.incorrectOperation);
+                    Bank.ShowMessage(ConsoleProvider.IncorrectOperation);
                 }
 
                 card.Balance += money;
                 Balance -= money;
 
-                Bank.showMessage(ConsoleProvider.successfullyOperation);
+                Bank.ShowMessage(ConsoleProvider.SuccessfullyOperation);
             }
         }
 
         public override void ChooseOperation()
         {
-            Bank.showMessage(ConsoleProvider.operationsDebitCard);
+            Bank.ShowMessage(ConsoleProvider.OperationsDebitCard);
 
-            switch(ConsoleProvider.ReadChoose(possibleCountActions))
+            switch (ConsoleProvider.ReadChoose(possibleCountActions))
             {
                 case 1:
-                    string numberAccount = ConsoleProvider.InputNumberAccount();
+                    string numberAccount = ConsoleProvider.InputStringValue(ConsoleProvider.InputRecepientAccounts);
 
-                    if(numberAccount != ConsoleProvider.incorrectInput)
+                    if (numberAccount != ConsoleProvider.IncorrectInput)
                     {
-                        TransferToAccount(
-                                numberAccount,
-                                ConsoleProvider.InputValue()
-                            );
+                        TransferMoneyToAccount(numberAccount, ConsoleProvider.InputIntegerValue());
                     }
                     break;
 
                 case 2:
-                    TransferToCard();
+                    TransferMoneyToCard();
                     break;
 
                 case 3: 

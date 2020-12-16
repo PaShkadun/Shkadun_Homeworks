@@ -20,23 +20,23 @@ namespace Shkadun_Bank
             credits = new List<Credit>();
             Balance = 0;
             Type = TypeCard.Credit;
-            CardNumber = NewRandom.RandomCardNumber();
+            CardNumber = CustomRandom.RandomCardNumber();
         }
 
         public void ChargeCredit()
         {
-            if(credits.Count != 0)
+            if (credits.Count != 0)
             {
                 int numberCredit = 0;
 
-                foreach(var credit in credits)
+                foreach (Credit credit in credits)
                 {
                     if (credit.Monthes != 0)
                     {
                         credit.monthesDebt++;
                         credit.Monthes--;
 
-                        Bank.showMessage(chargeCredit + credit.creditSum + chargeNumberCredit + numberCredit++);
+                        Bank.ShowMessage(chargeCredit + credit.creditSum + chargeNumberCredit + numberCredit++);
                     }
                 }
             }
@@ -44,24 +44,21 @@ namespace Shkadun_Bank
 
         public override void ChooseOperation()
         {
-            Bank.showMessage(ConsoleProvider.operationsCreditCard);
+            Bank.ShowMessage(ConsoleProvider.OperationsCreditCard);
 
-            switch(ConsoleProvider.ReadChoose(possibleCountActions - 1))
+            switch (ConsoleProvider.ReadChoose(possibleCountActions - 1))
             {
                 case 1:
                     Bank.ShowAccounts();
-                    TransferToCard();
+                    TransferMoneyToCard();
                     break;
 
                 case 2:
-                    string numberAccount = ConsoleProvider.InputNumberAccount();
+                    string numberAccount = ConsoleProvider.InputStringValue(ConsoleProvider.InputRecepientAccounts);
 
-                    if (numberAccount != ConsoleProvider.incorrectInput)
+                    if (numberAccount != ConsoleProvider.IncorrectInput)
                     {
-                        TransferToAccount(
-                                numberAccount,
-                                ConsoleProvider.InputValue()
-                            );
+                        TransferMoneyToAccount(numberAccount, ConsoleProvider.InputIntegerValue());
                     }
                     break;
 
@@ -70,15 +67,15 @@ namespace Shkadun_Bank
                     break;
 
                 case 4:
-                    if(CheckDebtCredits())
+                    if (CheckDebtCredits())
                     {
-                        Bank.showMessage(ConsoleProvider.haveNotNegativeCredit);
+                        Bank.ShowMessage(ConsoleProvider.HaveNotNegativeCredit);
                     }
                     else
                     {
                         ShowAllCredit();
 
-                        if(credits.Count != 0)
+                        if (credits.Count != 0)
                         {
                             PayCredit(credits[ConsoleProvider.ReadChoose(credits.Count - 1)]);
                         }
@@ -95,69 +92,69 @@ namespace Shkadun_Bank
             }
         }
 
-        public override void TransferToCard()
+        public override void TransferMoneyToCard()
         {
             Bank.ShowAccounts();
 
-            int chooseAccount = ConsoleProvider.ReadChoose(Bank.accounts.Count - 1);
+            int chooseAccount = ConsoleProvider.ReadChoose(Bank.Accounts.Count - 1);
 
-            if (Bank.accounts[chooseAccount].cards.Count == 0)
+            if (Bank.Accounts[chooseAccount].Cards.Count == 0)
             {
-                Bank.showMessage(ConsoleProvider.noneCardOnAccount);
+                Bank.ShowMessage(ConsoleProvider.NoneCardOnAccount);
 
                 return;
             }
 
-            Bank.accounts[chooseAccount].Showcards();
+            Bank.Accounts[chooseAccount].ShowCards();
 
-            int chooseCard = ConsoleProvider.ReadChoose(Bank.accounts[chooseAccount].cards.Count);
-            Card card = Bank.accounts[chooseAccount].cards[chooseCard];
+            int chooseCard = ConsoleProvider.ReadChoose(Bank.Accounts[chooseAccount].Cards.Count);
+            Card card = Bank.Accounts[chooseAccount].Cards[chooseCard];
 
             if (card.Type == TypeCard.Debit)
             {
-                Bank.showMessage(ConsoleProvider.incorrectOperation);
+                Bank.ShowMessage(ConsoleProvider.IncorrectOperation);
             }
             else
             {
-                int money = ConsoleProvider.InputValue();
+                int money = ConsoleProvider.InputIntegerValue();
                 
-                if(money > card.Balance)
+                if (money > card.Balance)
                 {
-                    Bank.showMessage(ConsoleProvider.lackingMoney);
+                    Bank.ShowMessage(ConsoleProvider.LackingMoney);
                 }
                 else
                 {
-                    if(card == this)
+                    if (card == this)
                     {
-                        Bank.showMessage(ConsoleProvider.incorrectOperation);
+                        Bank.ShowMessage(ConsoleProvider.IncorrectOperation);
                     }
 
                     card.Balance += money;
                     Balance -= money;
 
-                    Bank.showMessage(ConsoleProvider.successfullyOperation);
+                    Bank.ShowMessage(ConsoleProvider.SuccessfullyOperation);
                 }
             }
         }
 
         public void PayCredit(Credit credit)
         {
-            if(credit.creditSum > Balance)
+            if (credit.creditSum > Balance)
             {
-                Bank.showMessage(ConsoleProvider.lackingMoney);
+                Bank.ShowMessage(ConsoleProvider.LackingMoney);
             }
             else
             {
                 Balance -= credit.creditSum;
                 credit.monthesDebt = 0;
 
-                if(credit.monthesDebt == 0 && credit.Monthes == 0)
+                if (credit.monthesDebt == 0 && credit.Monthes == 0)
                 {
-                    Bank.showMessage(ConsoleProvider.creditPaid);
+                    Bank.ShowMessage(ConsoleProvider.CreditPaid);
 
-                    for(int numberCredit = 0; numberCredit < credits.Count; numberCredit++)
+                    for (var numberCredit = 0; numberCredit < credits.Count; numberCredit++)
                     {
-                        if(credit == credits[numberCredit])
+                        if (credit == credits[numberCredit])
                         {
                             credits.RemoveAt(numberCredit);
                             break;
@@ -166,7 +163,7 @@ namespace Shkadun_Bank
                 }
                 else
                 {
-                    Bank.showMessage(ConsoleProvider.successfullyOperation);
+                    Bank.ShowMessage(ConsoleProvider.SuccessfullyOperation);
                 }
             }
         }
@@ -175,27 +172,27 @@ namespace Shkadun_Bank
         {
             if (CheckDebtCredits())
             {
-                Bank.showMessage(addCreditInfo);
-                credits.Add(new Credit(ConsoleProvider.InputValue(), ConsoleProvider.InputValue()));
-                Bank.showMessage(ConsoleProvider.successfullyOperation);
+                Bank.ShowMessage(addCreditInfo);
+                credits.Add(new Credit(ConsoleProvider.InputIntegerValue(), ConsoleProvider.InputIntegerValue()));
+                Bank.ShowMessage(ConsoleProvider.SuccessfullyOperation);
             }
             else
             {
-                Bank.showMessage(ConsoleProvider.haveNegativeCredit);
+                Bank.ShowMessage(ConsoleProvider.HaveNegativeCredit);
             }
         }
 
         public void ShowAllCredit()
         {
-            if(credits.Count == 0)
+            if (credits.Count == 0)
             {
-                Bank.showMessage(ConsoleProvider.haveNotCredit);
+                Bank.ShowMessage(ConsoleProvider.HaveNotCredit);
             }
             else
             {
                 int countCredit = 0;
 
-                foreach(var credit in credits)
+                foreach (Credit credit in credits)
                 {
                     Console.WriteLine($"{countCredit++}. {credit.creditSum * credit.monthesDebt}");
                 }
@@ -204,7 +201,7 @@ namespace Shkadun_Bank
 
         public bool CheckDebtCredits()
         {
-            if(credits.Count == 0)
+            if (credits.Count == 0)
             {
                 return true;
             }
@@ -212,9 +209,9 @@ namespace Shkadun_Bank
             {
                 bool haveDebt = false;
 
-                foreach(var credit in credits)
+                foreach (Credit credit in credits)
                 {
-                    if(credit.monthesDebt > 0)
+                    if (credit.monthesDebt > 0)
                     {
                         haveDebt = true;
                         break;

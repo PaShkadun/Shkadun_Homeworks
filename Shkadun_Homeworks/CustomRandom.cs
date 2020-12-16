@@ -2,7 +2,7 @@
 
 namespace Shkadun_Bank
 {
-    public class NewRandom
+    public class CustomRandom
     {
         private static Random random = new Random();
 
@@ -13,7 +13,7 @@ namespace Shkadun_Bank
                                 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
             string numberAccount = "";
 
-            for (int numberAccountLength = 0; numberAccountLength < 20; numberAccountLength++)
+            for (var numberAccountLength = 0; numberAccountLength < Account.lengthNumberAccount; numberAccountLength++)
             {
                 numberAccount += accessSymbols[random.Next(0, accessSymbols.Length - 1)];
             }
@@ -25,11 +25,11 @@ namespace Shkadun_Bank
 
         public static string RandomCardNumber()
         {
-            string numberCard = "";
             //Разрешённые символы
             char[] accessSymbols = { '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' };
+            string numberCard = "";
 
-            for (int numberCardLength = 0; numberCardLength < 16; numberCardLength++)
+            for (var numberCardLength = 0; numberCardLength < Card.lengthNumberCard; numberCardLength++)
             {
                 numberCard += accessSymbols[random.Next(0, accessSymbols.Length - 1)];
             }

@@ -1,42 +1,53 @@
-﻿namespace Shkadun_Bank
+﻿using System.Text.RegularExpressions;
+
+namespace Shkadun_Bank
 {
     public abstract class Card
     {
+        public const int lengthNumberCard = 16;
+
         public int Balance { get; set; }
         public string CardNumber { get; protected set; }
         abstract public TypeCard Type { get; }
 
-        public abstract void TransferToCard();
+        public abstract void TransferMoneyToCard();
 
-        public void TransferToAccount(string accountNumber, int sum)
+        public void TransferMoneyToAccount(string numberAccount, int sum)
         {
-            if (accountNumber != ConsoleProvider.incorrectInput)
+            Regex regex = new Regex(@"\w");
+            MatchCollection matchCollection = regex.Matches(numberAccount);
+
+            if (matchCollection.Count == Account.lengthNumberAccount)
             {
                 if (sum > Balance)
                 {
-                    Bank.showMessage(ConsoleProvider.lackingMoney);
+                    Bank.ShowMessage(ConsoleProvider.LackingMoney);
                 }
                 else
                 {
                     Balance -= sum;
 
-                    Bank.showMessage(ConsoleProvider.successfullyOperation);
+                    Bank.ShowMessage(ConsoleProvider.SuccessfullyOperation);
                 }
+            }
+            else
+            {
+                Bank.ShowMessage(ConsoleProvider.IncorrectInput);
             }
         }
 
         public void SpendMoney()
         {
-            int money = ConsoleProvider.InputValue();
+            int money = ConsoleProvider.InputIntegerValue();
 
             if (money > Balance)
             {
-                Bank.showMessage(ConsoleProvider.lackingMoney);
+                Bank.ShowMessage(ConsoleProvider.LackingMoney);
             }
             else
             {
                 Balance -= money;
-                Bank.showMessage(ConsoleProvider.successfullyOperation);
+                Bank.ShowMessage(ConsoleProvider.SuccessfullyOperation);
             }
         }
 

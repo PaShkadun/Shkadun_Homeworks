@@ -5,34 +5,35 @@ namespace Shkadun_Bank
 {
     public class Account
     {
-        private const string chooseCard = "Choose card";
-        private const string noneCards = "You haven't cards";
+        private const int possibleCountActionsCard = 3;
+        private const int typesOfCard = 2;
+        public const int lengthNumberAccount = 20;
 
-        public string ID { get; }
+        public string Id { get; }
         public int Money { get; set; }
 
-        public List<Card> cards;
+        public List<Card> Cards;
 
         public Account()
         {
-            cards = new List<Card>();
-            ID = NewRandom.CreateNumberAccount();
+            Cards = new List<Card>();
+            Id = CustomRandom.CreateNumberAccount();
 
             Money = 0;
         }
 
-        public void Showcards()
+        public void ShowCards()
         {
-            if(cards.Count == 0)
+            if (Cards.Count == 0)
             {
-                Bank.showMessage(noneCards);
+                Bank.ShowMessage(ConsoleProvider.NoneCards);
 
                 return;
             }
 
             int countCard = 0;
 
-            foreach(var card in cards)
+            foreach (Card card in Cards)
             {
                 Console.WriteLine(countCard++ + " " + card.CardNumber);
             }
@@ -40,28 +41,67 @@ namespace Shkadun_Bank
 
         public void DeleteCard()
         {
-            int choose = ConsoleProvider.ReadChoose(cards.Count - 1, chooseCard);
+            int chooseCard = ConsoleProvider.ReadChoose(Cards.Count - 1, ConsoleProvider.ChooseCard);
 
-            if (cards[choose].Type != TypeCard.Credit)
+            if (Cards[chooseCard].Type != TypeCard.Credit)
             {
-                Money += cards[choose].Balance;
+                Money += Cards[chooseCard].Balance;
 
-                cards.RemoveAt(choose);
-                Bank.showMessage(ConsoleProvider.successfullyOperation);
+                Cards.RemoveAt(chooseCard);
+                Bank.ShowMessage(ConsoleProvider.SuccessfullyOperation);
             }
             else
             {
-                if (((CreditCard)cards[choose]).CheckCredits())
+                if (((CreditCard)Cards[chooseCard]).CheckCredits())
                 {
-                    Money += cards[choose].Balance;
+                    Money += Cards[chooseCard].Balance;
 
-                    cards.RemoveAt(choose);
-                    Bank.showMessage(ConsoleProvider.successfullyOperation);
+                    Cards.RemoveAt(chooseCard);
+                    Bank.ShowMessage(ConsoleProvider.SuccessfullyOperation);
                 }
                 else
                 {
-                    Bank.showMessage(ConsoleProvider.haveCredit);
+                    Bank.ShowMessage(ConsoleProvider.HaveCredit);
                 }
+            }
+        }
+
+        public void ManageCards()
+        {
+            switch (ConsoleProvider.ChooseActions(ConsoleProvider.ActionsCards, possibleCountActionsCard))
+            {
+                case 1:
+                    Bank.ShowMessage(ConsoleProvider.TypesCard);
+
+                    if (ConsoleProvider.ReadChoose(typesOfCard) == (int)TypeCard.Credit)
+                    {
+                        Cards.Add(new CreditCard());
+                    }
+                    else
+                    {
+                        Cards.Add(new DebetCard());
+                    }
+
+                    Bank.ShowMessage(ConsoleProvider.SuccessfullyOperation);
+                    break;
+
+                case 2:
+                    ShowCards();
+
+                    if (Cards.Count != 0)
+                    {
+                        DeleteCard();
+                    }
+                    break;
+
+                case 3:
+                    ShowCards();
+
+                    if (Cards.Count != 0)
+                    {
+                        Cards[ConsoleProvider.ReadChoose(Cards.Count, ConsoleProvider.ChooseCard)].ChooseOperation();
+                    }
+                    break;
             }
         }
     }
