@@ -2,25 +2,25 @@
 {
     public class Credit
     {
-        public const int CreditRate = 20;
+        public const int PercentCreditRate = 20;
         private const int percents = 100;
 
         public int Monthes { get; set; }
 
-        public readonly int creditSum;
-        public int monthesDebt;
+        public readonly int CreditSum;
+        public int MonthesDebt;
 
         public Credit(int monthes, int sum)
         {
-            monthesDebt = 0;
+            MonthesDebt = 0;
             Monthes = monthes;
-            creditSum = ((sum * (percents + CreditRate)) / percents);
+            CreditSum = ((sum * (percents + PercentCreditRate)) / percents);
         }
 
         public void PayCredit()
         {
-            Monthes -= monthesDebt;
-            monthesDebt = 0;
+            Monthes -= MonthesDebt;
+            MonthesDebt = 0;
         }
     }
 }

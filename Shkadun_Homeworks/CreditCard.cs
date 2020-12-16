@@ -8,16 +8,15 @@ namespace Shkadun_Bank
         private const string addCreditInfo = "Input credit info(monthes, sum)";
         private const string chargeCredit = "Charge sum ";
         private const string chargeNumberCredit = " | credit number #";
-
         private const int possibleCountActions = 6;
 
         public override TypeCard Type { get; }
 
-        public List<Credit> credits;
+        public List<Credit> Credits;
 
         public CreditCard()
         {
-            credits = new List<Credit>();
+            Credits = new List<Credit>();
             Balance = 0;
             Type = TypeCard.Credit;
             CardNumber = CustomRandom.RandomCardNumber();
@@ -25,18 +24,18 @@ namespace Shkadun_Bank
 
         public void ChargeCredit()
         {
-            if (credits.Count != 0)
+            if (Credits.Count != 0)
             {
                 int numberCredit = 0;
 
-                foreach (Credit credit in credits)
+                foreach (Credit credit in Credits)
                 {
                     if (credit.Monthes != 0)
                     {
-                        credit.monthesDebt++;
+                        credit.MonthesDebt++;
                         credit.Monthes--;
 
-                        Bank.ShowMessage(chargeCredit + credit.creditSum + chargeNumberCredit + numberCredit++);
+                        Bank.ShowMessage(chargeCredit + credit.CreditSum + chargeNumberCredit + numberCredit++);
                     }
                 }
             }
@@ -75,9 +74,9 @@ namespace Shkadun_Bank
                     {
                         ShowAllCredit();
 
-                        if (credits.Count != 0)
+                        if (Credits.Count != 0)
                         {
-                            PayCredit(credits[ConsoleProvider.ReadChoose(credits.Count - 1)]);
+                            PayCredit(Credits[ConsoleProvider.ReadChoose(Credits.Count - 1)]);
                         }
                     }
                     break;
@@ -139,24 +138,24 @@ namespace Shkadun_Bank
 
         public void PayCredit(Credit credit)
         {
-            if (credit.creditSum > Balance)
+            if (credit.CreditSum > Balance)
             {
                 Bank.ShowMessage(ConsoleProvider.LackingMoney);
             }
             else
             {
-                Balance -= credit.creditSum;
-                credit.monthesDebt = 0;
+                Balance -= credit.CreditSum;
+                credit.MonthesDebt = 0;
 
-                if (credit.monthesDebt == 0 && credit.Monthes == 0)
+                if (credit.MonthesDebt == 0 && credit.Monthes == 0)
                 {
                     Bank.ShowMessage(ConsoleProvider.CreditPaid);
 
-                    for (var numberCredit = 0; numberCredit < credits.Count; numberCredit++)
+                    for (var numberCredit = 0; numberCredit < Credits.Count; numberCredit++)
                     {
-                        if (credit == credits[numberCredit])
+                        if (credit == Credits[numberCredit])
                         {
-                            credits.RemoveAt(numberCredit);
+                            Credits.RemoveAt(numberCredit);
                             break;
                         }
                     }
@@ -173,7 +172,7 @@ namespace Shkadun_Bank
             if (CheckDebtCredits())
             {
                 Bank.ShowMessage(addCreditInfo);
-                credits.Add(new Credit(ConsoleProvider.InputIntegerValue(), ConsoleProvider.InputIntegerValue()));
+                Credits.Add(new Credit(ConsoleProvider.InputIntegerValue(), ConsoleProvider.InputIntegerValue()));
                 Bank.ShowMessage(ConsoleProvider.SuccessfullyOperation);
             }
             else
@@ -184,7 +183,7 @@ namespace Shkadun_Bank
 
         public void ShowAllCredit()
         {
-            if (credits.Count == 0)
+            if (Credits.Count == 0)
             {
                 Bank.ShowMessage(ConsoleProvider.HaveNotCredit);
             }
@@ -192,16 +191,16 @@ namespace Shkadun_Bank
             {
                 int countCredit = 0;
 
-                foreach (Credit credit in credits)
+                foreach (Credit credit in Credits)
                 {
-                    Console.WriteLine($"{countCredit++}. {credit.creditSum * credit.monthesDebt}");
+                    Console.WriteLine($"{countCredit++}. {credit.CreditSum * credit.MonthesDebt}");
                 }
             }
         }
 
         public bool CheckDebtCredits()
         {
-            if (credits.Count == 0)
+            if (Credits.Count == 0)
             {
                 return true;
             }
@@ -209,9 +208,9 @@ namespace Shkadun_Bank
             {
                 bool haveDebt = false;
 
-                foreach (Credit credit in credits)
+                foreach (Credit credit in Credits)
                 {
-                    if (credit.monthesDebt > 0)
+                    if (credit.MonthesDebt > 0)
                     {
                         haveDebt = true;
                         break;
@@ -224,14 +223,7 @@ namespace Shkadun_Bank
 
         public bool CheckCredits()
         {
-            if (credits.Count == 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return Credits.Count == 0 ? true : false;
         }
     }
 }

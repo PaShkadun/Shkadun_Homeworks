@@ -72,12 +72,12 @@ namespace Shkadun_Bank
         {
             Console.WriteLine(InputValue);
 
-            while (!int.TryParse(Console.ReadLine(), out var sum))
-            {
-                return sum;
-            }
+            // Как сделать без объявления не догнал.
+            int sum;
 
-            return 0;
+            while (!(int.TryParse(Console.ReadLine(), out sum))) ;
+
+            return sum;
         }
 
         public static string InputStringValue(string message)
@@ -86,7 +86,7 @@ namespace Shkadun_Bank
 
             string name;
 
-            while ((name = Console.ReadLine()) != null) ;
+            while ((name = Console.ReadLine()) == null) ;
 
             return name;
         }
