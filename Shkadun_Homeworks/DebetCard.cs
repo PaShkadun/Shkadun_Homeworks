@@ -2,7 +2,7 @@
 {
     public class DebetCard : Card
     {
-        private const int possibleCountActions = 3;
+        private const int PossibleCountOfDebitCardActions = 3;
 
         public override TypeCard Type { get; }
 
@@ -17,7 +17,7 @@
         {
             Bank.ShowAccounts();
 
-            int chooseAccount = ConsoleProvider.ReadChoose(Bank.Accounts.Count);
+            int chooseAccount = ConsoleProvider.ReadChooseAction(Bank.Accounts.Count);
             
             if (Bank.Accounts[chooseAccount].Cards.Count == 0)
             {
@@ -28,7 +28,7 @@
 
             Bank.Accounts[chooseAccount].ShowCards();
 
-            int chooseCard = ConsoleProvider.ReadChoose(Bank.Accounts[chooseAccount].Cards.Count);
+            int chooseCard = ConsoleProvider.ReadChooseAction(Bank.Accounts[chooseAccount].Cards.Count);
             Card card = Bank.Accounts[chooseAccount].Cards[chooseCard];
 
             int money = ConsoleProvider.InputIntegerValue();
@@ -42,6 +42,8 @@
                 if (card == this)
                 {
                     Bank.ShowMessage(ConsoleProvider.IncorrectOperation);
+
+                    return;
                 }
 
                 card.Balance += money;
@@ -55,7 +57,7 @@
         {
             Bank.ShowMessage(ConsoleProvider.OperationsDebitCard);
 
-            switch (ConsoleProvider.ReadChoose(possibleCountActions))
+            switch (ConsoleProvider.ReadChooseAction(PossibleCountOfDebitCardActions))
             {
                 case 1:
                     string numberAccount = ConsoleProvider.InputStringValue(ConsoleProvider.InputRecepientAccounts);

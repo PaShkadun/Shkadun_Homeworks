@@ -4,7 +4,7 @@ namespace Shkadun_Bank
 {
     public abstract class Card
     {
-        public const int lengthNumberCard = 16;
+        public const int CardNumberLength = 16;
 
         public int Balance { get; set; }
         public string CardNumber { get; protected set; }
@@ -17,7 +17,7 @@ namespace Shkadun_Bank
             Regex regex = new Regex(@"\w");
             MatchCollection matchCollection = regex.Matches(numberAccount);
 
-            if (matchCollection.Count == Account.lengthNumberAccount)
+            if (matchCollection.Count == Account.AccountNumberLength)
             {
                 if (sum > Balance)
                 {

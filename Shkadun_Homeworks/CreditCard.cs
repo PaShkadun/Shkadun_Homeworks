@@ -5,10 +5,7 @@ namespace Shkadun_Bank
 {
     public class CreditCard : Card
     {
-        private const string addCreditInfo = "Input credit info(monthes, sum)";
-        private const string chargeCredit = "Charge sum ";
-        private const string chargeNumberCredit = " | credit number #";
-        private const int possibleCountActions = 6;
+        private const int PossibleCountOfCreditCardActions = 6;
 
         public override TypeCard Type { get; }
 
@@ -26,7 +23,7 @@ namespace Shkadun_Bank
         {
             if (Credits.Count != 0)
             {
-                int numberCredit = 0;
+                var numberCredit = 0;
 
                 foreach (Credit credit in Credits)
                 {
@@ -35,7 +32,7 @@ namespace Shkadun_Bank
                         credit.MonthesDebt++;
                         credit.Monthes--;
 
-                        Bank.ShowMessage(chargeCredit + credit.CreditSum + chargeNumberCredit + numberCredit++);
+                        Bank.ShowMessage(ConsoleProvider.ChargeCredit + credit.CreditSum + ConsoleProvider.ChargeNumberCredit + numberCredit++);
                     }
                 }
             }
@@ -43,9 +40,7 @@ namespace Shkadun_Bank
 
         public override void ChooseOperation()
         {
-            Bank.ShowMessage(ConsoleProvider.OperationsCreditCard);
-
-            switch (ConsoleProvider.ReadChoose(possibleCountActions - 1))
+            switch (ConsoleProvider.ReadChooseAction(PossibleCountOfCreditCardActions - 1, ConsoleProvider.OperationsCreditCard))
             {
                 case 1:
                     Bank.ShowAccounts();
@@ -76,7 +71,7 @@ namespace Shkadun_Bank
 
                         if (Credits.Count != 0)
                         {
-                            PayCredit(Credits[ConsoleProvider.ReadChoose(Credits.Count - 1)]);
+                            PayCredit(Credits[ConsoleProvider.ReadChooseAction(Credits.Count - 1)]);
                         }
                     }
                     break;
@@ -95,7 +90,7 @@ namespace Shkadun_Bank
         {
             Bank.ShowAccounts();
 
-            int chooseAccount = ConsoleProvider.ReadChoose(Bank.Accounts.Count - 1);
+            int chooseAccount = ConsoleProvider.ReadChooseAction(Bank.Accounts.Count - 1);
 
             if (Bank.Accounts[chooseAccount].Cards.Count == 0)
             {
@@ -106,7 +101,7 @@ namespace Shkadun_Bank
 
             Bank.Accounts[chooseAccount].ShowCards();
 
-            int chooseCard = ConsoleProvider.ReadChoose(Bank.Accounts[chooseAccount].Cards.Count);
+            int chooseCard = ConsoleProvider.ReadChooseAction(Bank.Accounts[chooseAccount].Cards.Count);
             Card card = Bank.Accounts[chooseAccount].Cards[chooseCard];
 
             if (card.Type == TypeCard.Debit)
@@ -126,6 +121,8 @@ namespace Shkadun_Bank
                     if (card == this)
                     {
                         Bank.ShowMessage(ConsoleProvider.IncorrectOperation);
+
+                        return;
                     }
 
                     card.Balance += money;
@@ -171,7 +168,7 @@ namespace Shkadun_Bank
         {
             if (CheckDebtCredits())
             {
-                Bank.ShowMessage(addCreditInfo);
+                Bank.ShowMessage(ConsoleProvider.AddCreditInfo);
                 Credits.Add(new Credit(ConsoleProvider.InputIntegerValue(), ConsoleProvider.InputIntegerValue()));
                 Bank.ShowMessage(ConsoleProvider.SuccessfullyOperation);
             }

@@ -4,6 +4,9 @@ namespace Shkadun_Bank
 {
     public static class ConsoleProvider
     {
+        public const string AddCreditInfo = "Input credit info(monthes, sum)";
+        public const string ChargeCredit = "Charge sum ";
+        public const string ChargeNumberCredit = " | credit number #";
         public const string AccountBalance = ", sum = ";
         public const string AccountNumber = "Number = ";
         public const string NoneAccount = "You haven't accounts";
@@ -33,20 +36,14 @@ namespace Shkadun_Bank
         public const string IncorrectOperation = "This operation is block";
         public const string InputName = "Input recepient names";
         public const string InputRecepientAccounts = "Input number recepients account";
+        public const string HaveCardOnAccount = "Blocking operation. You have card.";
 
         public static void ShowMessage(string message)
         {
             Console.WriteLine(message);
         }
 
-        public static int ChooseActions(string message, int maxValue)
-        {
-            Console.WriteLine(message);
-
-            return ReadChoose(maxValue);
-        }
-
-        public static int ReadChoose(int maxValue, string message = null)
+        public static int ReadChooseAction(int maxValue, string message = null)
         {
             int choose;
             

@@ -5,9 +5,9 @@ namespace Shkadun_Bank
 {
     public class Account
     {
-        private const int possibleCountActionsCard = 3;
-        private const int typesOfCard = 2;
-        public const int lengthNumberAccount = 20;
+        private const int PossibleCountOfCardActions = 3;
+        private const int TypesOfCard = 2;
+        public const int AccountNumberLength = 20;
 
         public string Id { get; }
         public int Money { get; set; }
@@ -20,6 +20,17 @@ namespace Shkadun_Bank
             Id = CustomRandom.CreateNumberAccount();
 
             Money = 0;
+        }
+
+        public void CheckCards()
+        {
+            foreach(Card card in Cards)
+            {
+                if(card.Type == TypeCard.Credit)
+                {
+                    ((CreditCard)card).ChargeCredit();
+                }
+            }
         }
 
         public void ShowCards()
@@ -41,7 +52,7 @@ namespace Shkadun_Bank
 
         public void DeleteCard()
         {
-            int chooseCard = ConsoleProvider.ReadChoose(Cards.Count - 1, ConsoleProvider.ChooseCard);
+            int chooseCard = ConsoleProvider.ReadChooseAction(Cards.Count - 1, ConsoleProvider.ChooseCard);
 
             if (Cards[chooseCard].Type != TypeCard.Credit)
             {
@@ -68,12 +79,12 @@ namespace Shkadun_Bank
 
         public void ManageCards()
         {
-            switch (ConsoleProvider.ChooseActions(ConsoleProvider.ActionsCards, possibleCountActionsCard))
+            switch (ConsoleProvider.ReadChooseAction(PossibleCountOfCardActions, ConsoleProvider.ActionsCards))
             {
                 case 1:
                     Bank.ShowMessage(ConsoleProvider.TypesCard);
 
-                    if (ConsoleProvider.ReadChoose(typesOfCard) == (int)TypeCard.Credit)
+                    if (ConsoleProvider.ReadChooseAction(TypesOfCard) == (int)TypeCard.Credit)
                     {
                         Cards.Add(new CreditCard());
                     }
@@ -92,6 +103,7 @@ namespace Shkadun_Bank
                     {
                         DeleteCard();
                     }
+
                     break;
 
                 case 3:
@@ -99,8 +111,9 @@ namespace Shkadun_Bank
 
                     if (Cards.Count != 0)
                     {
-                        Cards[ConsoleProvider.ReadChoose(Cards.Count, ConsoleProvider.ChooseCard)].ChooseOperation();
+                        Cards[ConsoleProvider.ReadChooseAction(Cards.Count, ConsoleProvider.ChooseCard)].ChooseOperation();
                     }
+
                     break;
             }
         }

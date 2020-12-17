@@ -8,8 +8,9 @@ namespace Shkadun_Bank
     public static class Bank
     {
         public delegate void ShowMessages(string message);
-        private const int startMoney = 2500;
-        private const int possibleCountActions = 7;
+
+        private const int StartMoney = 2500;
+        private const int PossibleCountOfBankActions = 7;
 
         public static List<Account> Accounts;
         public static int Money;
@@ -18,7 +19,7 @@ namespace Shkadun_Bank
         static Bank() 
         {
             Accounts = new List<Account>();
-            Money = startMoney;
+            Money = StartMoney;
             ShowMessage += ConsoleProvider.ShowMessage;
         }
 
@@ -28,23 +29,17 @@ namespace Shkadun_Bank
             {
                 while (true)
                 {
-                    Thread.Sleep(1000);
-                    CheckCredits();
+                    Thread.Sleep(20000);
+                    CheckAccounts();
                 }
             });
         }
 
-        public static void CheckCredits()
+        public static void CheckAccounts()
         {
             foreach (Account account in Accounts)
             {
-                foreach (Card card in account.Cards)
-                {
-                    if (card.Type == TypeCard.Credit)
-                    {
-                        ((CreditCard)card).ChargeCredit();
-                    }
-                }
+                account.CheckCards();
             }
         }
 
@@ -73,32 +68,18 @@ namespace Shkadun_Bank
 
         public static void DeleteAccount(int accountIndex)
         {
-            var creditDebt = false;
-
-            foreach (Card card in Accounts[accountIndex].Cards)
-            {
-                if (card.Type == TypeCard.Credit)
-                {
-                    if (!((CreditCard)card).CheckCredits())
-                    {
-                        creditDebt = true;
-                        break;
-                    }
-                }
-            }
-
-            if (!creditDebt)
+            if (Accounts[accountIndex].Cards.Count == 0)
             {
                 Accounts.RemoveAt(accountIndex);
                 ShowMessage(ConsoleProvider.SuccessfullyOperation);
             }
             else
             {
-                ShowMessage(ConsoleProvider.HaveCredit);
+                ShowMessage(ConsoleProvider.HaveCardOnAccount);
             }
         }
 
-        public static void AddCashOnAccount(int accountIndex, int sum)
+        public static void AddCashToAccount(int accountIndex, int sum)
         {
             if (sum > Money)
             {
@@ -119,7 +100,7 @@ namespace Shkadun_Bank
             {
                 Console.Clear();
 
-                switch (ConsoleProvider.ChooseActions(ConsoleProvider.ActionsBank, possibleCountActions))
+                switch (ConsoleProvider.ReadChooseAction(PossibleCountOfBankActions, ConsoleProvider.ActionsBank))
                 {
                     case 1:
                         AddAccount();
@@ -130,7 +111,7 @@ namespace Shkadun_Bank
 
                         if (Accounts.Count != 0)
                         { 
-                            AddCashOnAccount(ConsoleProvider.ReadChoose(Accounts.Count - 1, ConsoleProvider.ChooseAccount), ConsoleProvider.InputIntegerValue());
+                            AddCashToAccount(ConsoleProvider.ReadChooseAction(Accounts.Count - 1, ConsoleProvider.ChooseAccount), ConsoleProvider.InputIntegerValue());
                         }
                         break;
 
@@ -139,7 +120,7 @@ namespace Shkadun_Bank
 
                         if (Accounts.Count != 0)
                         {
-                            DeleteAccount(ConsoleProvider.ReadChoose(Accounts.Count - 1, ConsoleProvider.ChooseAccount));
+                            DeleteAccount(ConsoleProvider.ReadChooseAction(Accounts.Count - 1, ConsoleProvider.ChooseAccount));
                         }
                         break;
 
@@ -152,7 +133,7 @@ namespace Shkadun_Bank
 
                         if (Accounts.Count != 0)
                         {
-                            Accounts[ConsoleProvider.ReadChoose(Accounts.Count - 1, ConsoleProvider.ChooseAccount)].ManageCards();
+                            Accounts[ConsoleProvider.ReadChooseAction(Accounts.Count - 1, ConsoleProvider.ChooseAccount)].ManageCards();
                         }
                         break;
 
@@ -162,7 +143,7 @@ namespace Shkadun_Bank
 
                     case 7:
                         ShowAccounts();
-                        ShowMessage(ConsoleProvider.MessageBalance + Accounts[ConsoleProvider.ReadChoose(Accounts.Count - 1)].Money);
+                        ShowMessage(ConsoleProvider.MessageBalance + Accounts[ConsoleProvider.ReadChooseAction(Accounts.Count - 1)].Money);
                         break;
 
                     case 0:
