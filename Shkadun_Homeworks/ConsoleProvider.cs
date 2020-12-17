@@ -20,13 +20,14 @@ namespace Shkadun_Bank
         public const string InputValue = "Input int value ";
         public const string ActionsBank = "1. New Account\n2. Add cash on Account\n" +
                                           "3. Delete Account\n4. Show all accounts" +
-                                          "\n5. Manage cards\n6. Show bank balance\n7. Show account balance\n0. Exit";
-        public const string ActionsCards= "1. Add card\n2. Delete card\n3. Choose card";
+                                          "\n5. Manage Account\n6. Show bank balance\n7. Show account balance\n0. Exit";
+        public const string ActionsDebitAccount = "1. Add card\n2. Delete card\n3. Choose card\n4. Add cash on card";
+        public const string ActionsCreditAccount = "1. Add card\n2. Delete card\n3. Choose card\n4. Add cash on card\n5. Add Credit\n6. Pay credit";
         public const string OperationsCreditCard = "1. Transfer to card\n2. Transfer to account\n3. Add credit" +
                                                   "\n4. Pay credit\n5. Show credits\n6. Spend money";
         public const string OperationsDebitCard = "1. Transfer to account\n2. Transfer to card\n3. Spend money";
         public const string SuccessfullyOperation = "Successfully";
-        public const string TypesCard = "0 - Debet, 1 - Credit";
+        public const string TypesCardOrAccount = "0 - Debet, 1 - Credit";
         public const string HaveCredit = "You have credit.";
         public const string HaveNotCredit = "You haven't credit";
         public const string CreditPaid = "This credit paid out";

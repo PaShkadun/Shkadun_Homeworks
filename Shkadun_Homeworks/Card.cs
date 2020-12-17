@@ -8,7 +8,7 @@ namespace Shkadun_Bank
 
         public int Balance { get; set; }
         public string CardNumber { get; protected set; }
-        abstract public TypeCard Type { get; }
+        abstract public TypeCardOrAccount Type { get; }
 
         public abstract void TransferMoneyToCard();
 

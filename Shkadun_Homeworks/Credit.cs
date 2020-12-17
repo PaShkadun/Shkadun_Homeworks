@@ -14,7 +14,7 @@
         {
             MonthesDebt = 0;
             Monthes = monthes;
-            CreditSum = ((sum * (Percents + PercentCreditRate)) / Percents);
+            CreditSum = ((sum * (Percents + PercentCreditRate)) / Percents) / monthes;
         }
 
         public void PayCredit()

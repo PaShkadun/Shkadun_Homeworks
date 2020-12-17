@@ -11,6 +11,7 @@ namespace Shkadun_Bank
 
         private const int StartMoney = 2500;
         private const int PossibleCountOfBankActions = 7;
+        private const int TypesOfAccount = 2;
 
         public static List<Account> Accounts;
         public static int Money;
@@ -39,14 +40,33 @@ namespace Shkadun_Bank
         {
             foreach (Account account in Accounts)
             {
-                account.CheckCards();
+                if (account.Type == TypeCardOrAccount.Credit)
+                {
+                    ((CreditAccount)account).CheckCards();
+                }
             }
         }
 
         public static void AddAccount()
         {
-            Accounts.Add(new Account());
+            ShowMessage(ConsoleProvider.TypesCardOrAccount);
+            int chooseType = ConsoleProvider.ReadChooseAction(TypesOfAccount);
+
+            if(chooseType == (int)TypeCardOrAccount.Debit)
+            {
+                Accounts.Add(new DebitAccount(TypeCardOrAccount.Debit));
+            }
+            else
+            {
+                Accounts.Add(new CreditAccount(TypeCardOrAccount.Credit));
+            }
+
             ShowMessage(ConsoleProvider.SuccessfullyOperation);
+        }
+
+        public static List<Account> GetAccounts()
+        {
+            return Accounts;
         }
 
         public static void ShowAccounts()
@@ -133,7 +153,7 @@ namespace Shkadun_Bank
 
                         if (Accounts.Count != 0)
                         {
-                            Accounts[ConsoleProvider.ReadChooseAction(Accounts.Count - 1, ConsoleProvider.ChooseAccount)].ManageCards();
+                            Accounts[ConsoleProvider.ReadChooseAction(Accounts.Count - 1, ConsoleProvider.ChooseAccount)].ManageAccount();
                         }
                         break;
 

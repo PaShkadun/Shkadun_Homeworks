@@ -3,118 +3,42 @@ using System.Collections.Generic;
 
 namespace Shkadun_Bank
 {
-    public class Account
+    public abstract class Account
     {
-        private const int PossibleCountOfCardActions = 3;
-        private const int TypesOfCard = 2;
         public const int AccountNumberLength = 20;
 
-        public string Id { get; }
+        public string Id { get; protected set; }
+
         public int Money { get; set; }
 
-        public List<Card> Cards;
+        virtual public List<Card> Cards { get; set; }
 
-        public Account()
+        public TypeCardOrAccount Type { get; protected set; }
+
+        abstract public void ShowCards();
+
+        abstract public void AddNewCard();
+
+        abstract public void DeleteCard();
+
+        abstract public void ManageAccount();
+
+        public void ADdCashOnCart()
         {
-            Cards = new List<Card>();
-            Id = CustomRandom.CreateNumberAccount();
-
-            Money = 0;
-        }
-
-        public void CheckCards()
-        {
-            foreach(Card card in Cards)
+            int money = ConsoleProvider.InputIntegerValue();
+            
+            if(Money < money)
             {
-                if(card.Type == TypeCard.Credit)
-                {
-                    ((CreditCard)card).ChargeCredit();
-                }
-            }
-        }
-
-        public void ShowCards()
-        {
-            if (Cards.Count == 0)
-            {
-                Bank.ShowMessage(ConsoleProvider.NoneCards);
-
-                return;
-            }
-
-            int countCard = 0;
-
-            foreach (Card card in Cards)
-            {
-                Console.WriteLine(countCard++ + " " + card.CardNumber);
-            }
-        }
-
-        public void DeleteCard()
-        {
-            int chooseCard = ConsoleProvider.ReadChooseAction(Cards.Count - 1, ConsoleProvider.ChooseCard);
-
-            if (Cards[chooseCard].Type != TypeCard.Credit)
-            {
-                Money += Cards[chooseCard].Balance;
-
-                Cards.RemoveAt(chooseCard);
-                Bank.ShowMessage(ConsoleProvider.SuccessfullyOperation);
+                ConsoleProvider.ShowMessage(ConsoleProvider.LackingMoney);
             }
             else
             {
-                if (((CreditCard)Cards[chooseCard]).CheckCredits())
-                {
-                    Money += Cards[chooseCard].Balance;
+                ShowCards();
 
-                    Cards.RemoveAt(chooseCard);
-                    Bank.ShowMessage(ConsoleProvider.SuccessfullyOperation);
-                }
-                else
-                {
-                    Bank.ShowMessage(ConsoleProvider.HaveCredit);
-                }
-            }
-        }
+                int chooseCard = ConsoleProvider.ReadChooseAction(Cards.Count - 1, ConsoleProvider.ChooseCard);
+                Cards[chooseCard].Balance += money;
 
-        public void ManageCards()
-        {
-            switch (ConsoleProvider.ReadChooseAction(PossibleCountOfCardActions, ConsoleProvider.ActionsCards))
-            {
-                case 1:
-                    Bank.ShowMessage(ConsoleProvider.TypesCard);
-
-                    if (ConsoleProvider.ReadChooseAction(TypesOfCard) == (int)TypeCard.Credit)
-                    {
-                        Cards.Add(new CreditCard());
-                    }
-                    else
-                    {
-                        Cards.Add(new DebetCard());
-                    }
-
-                    Bank.ShowMessage(ConsoleProvider.SuccessfullyOperation);
-                    break;
-
-                case 2:
-                    ShowCards();
-
-                    if (Cards.Count != 0)
-                    {
-                        DeleteCard();
-                    }
-
-                    break;
-
-                case 3:
-                    ShowCards();
-
-                    if (Cards.Count != 0)
-                    {
-                        Cards[ConsoleProvider.ReadChooseAction(Cards.Count, ConsoleProvider.ChooseCard)].ChooseOperation();
-                    }
-
-                    break;
+                ConsoleProvider.ShowMessage(ConsoleProvider.SuccessfullyOperation);
             }
         }
     }

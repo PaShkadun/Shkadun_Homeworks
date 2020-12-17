@@ -2,14 +2,14 @@
 {
     public class DebetCard : Card
     {
-        private const int PossibleCountOfDebitCardActions = 3;
+        private const int PossibleCountOfDebitCardActions = 4;
 
-        public override TypeCard Type { get; }
+        public override TypeCardOrAccount Type { get; }
 
         public DebetCard()
         {
             Balance = 0;
-            Type = TypeCard.Debit;
+            Type = TypeCardOrAccount.Debit;
             CardNumber = CustomRandom.RandomCardNumber();
         }
 
