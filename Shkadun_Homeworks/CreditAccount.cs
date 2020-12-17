@@ -75,9 +75,9 @@ namespace Shkadun_Bank
         {
             bool negativeCredit = false;
 
-            foreach(Credit credit in Credits)
+            foreach (Credit credit in Credits)
             {
-                if(credit.MonthesDebt != 0)
+                if (credit.MonthesDebt != 0)
                 {
                     negativeCredit = true;
                 }
@@ -88,7 +88,7 @@ namespace Shkadun_Bank
 
         public void AddCredit()
         {
-            if(Credits.Count == 0 || !CheckCredits())
+            if (Credits.Count == 0 || !CheckCredits())
             {
                 Bank.ShowMessage(ConsoleProvider.AddCreditInfo);
 
@@ -106,7 +106,7 @@ namespace Shkadun_Bank
 
         public void PayCredit()
         {
-            if(Credits.Count == 0 || !CheckCredits())
+            if (Credits.Count == 0 || !CheckCredits())
             {
                 Bank.ShowMessage(ConsoleProvider.HaveNotCredit);
             }
@@ -114,14 +114,14 @@ namespace Shkadun_Bank
             {
                 var countCredit = 0;
 
-                foreach(Credit credit in Credits)
+                foreach (Credit credit in Credits)
                 {
                     Console.WriteLine($"{countCredit++} {credit.CreditSum}");
                 }
 
                 int chooseCredit = ConsoleProvider.ReadChooseAction(countCredit - 1, ConsoleProvider.InputValue);
 
-                if(Money < (Credits[chooseCredit].MonthesDebt * Credits[chooseCredit].CreditSum))
+                if (Money < (Credits[chooseCredit].MonthesDebt * Credits[chooseCredit].CreditSum))
                 {
                     Bank.ShowMessage(ConsoleProvider.LackingMoney);
                 }

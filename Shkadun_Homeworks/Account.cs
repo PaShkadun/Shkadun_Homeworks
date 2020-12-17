@@ -27,7 +27,7 @@ namespace Shkadun_Bank
         {
             int money = ConsoleProvider.InputIntegerValue();
             
-            if(Money < money)
+            if (Money < money)
             {
                 ConsoleProvider.ShowMessage(ConsoleProvider.LackingMoney);
             }

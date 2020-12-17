@@ -52,7 +52,7 @@ namespace Shkadun_Bank
             ShowMessage(ConsoleProvider.TypesCardOrAccount);
             int chooseType = ConsoleProvider.ReadChooseAction(TypesOfAccount);
 
-            if(chooseType == (int)TypeCardOrAccount.Debit)
+            if (chooseType == (int)TypeCardOrAccount.Debit)
             {
                 Accounts.Add(new DebitAccount(TypeCardOrAccount.Debit));
             }
