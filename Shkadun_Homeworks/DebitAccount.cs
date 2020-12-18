@@ -79,7 +79,7 @@ namespace Shkadun_Bank
                     break;
 
                 case 4:
-                    ADdCashOnCart();
+                    AddCashOnCart();
                     break;
             }
         }

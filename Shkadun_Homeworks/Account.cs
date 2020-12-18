@@ -23,7 +23,7 @@ namespace Shkadun_Bank
 
         abstract public void ManageAccount();
 
-        public void ADdCashOnCart()
+        public void AddCashOnCart()
         {
             int money = ConsoleProvider.InputIntegerValue();
             
