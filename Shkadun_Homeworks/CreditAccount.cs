@@ -9,12 +9,11 @@ namespace Shkadun_Bank
 
         public List<Credit> Credits;
 
-        public CreditAccount(TypeCardOrAccount type)
+        public CreditAccount()
         {
             Cards = new List<Card>();
             Credits = new List<Credit>();
             Id = CustomRandom.CreateNumberAccount();
-            Type = type;
             Money = 0;
         }
 
@@ -22,10 +21,7 @@ namespace Shkadun_Bank
         {
             foreach (CreditCard card in Cards)
             {
-                if (card.Type == TypeCardOrAccount.Credit)
-                {
-                    card.ChargeCredit();
-                }
+                card.ChargeCredit();
             }
         }
 

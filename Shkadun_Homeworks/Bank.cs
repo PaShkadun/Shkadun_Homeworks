@@ -40,7 +40,7 @@ namespace Shkadun_Bank
         {
             foreach (Account account in Accounts)
             {
-                if (account.Type == TypeCardOrAccount.Credit)
+                if (account as CreditAccount != null)
                 {
                     ((CreditAccount)account).CheckCards();
                 }
@@ -52,13 +52,13 @@ namespace Shkadun_Bank
             ShowMessage(ConsoleProvider.TypesCardOrAccount);
             int chooseType = ConsoleProvider.ReadChooseAction(TypesOfAccount);
 
-            if (chooseType == (int)TypeCardOrAccount.Debit)
+            if (chooseType == (int)TypeAccount.Debit)
             {
-                Accounts.Add(new DebitAccount(TypeCardOrAccount.Debit));
+                Accounts.Add(new DebitAccount());
             }
             else
             {
-                Accounts.Add(new CreditAccount(TypeCardOrAccount.Credit));
+                Accounts.Add(new CreditAccount());
             }
 
             ShowMessage(ConsoleProvider.SuccessfullyOperation);
@@ -174,8 +174,7 @@ namespace Shkadun_Bank
                         break;
                 }
 
-                // Нужен, чтобы можно было увидеть сообщение после совершения какого-либо действия
-                Thread.Sleep(500);
+                Console.ReadKey(true);
             }
         }
     }

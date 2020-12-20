@@ -46,8 +46,6 @@ namespace Shkadun_Bank
 
         public static int ReadChooseAction(int maxValue, string message = null)
         {
-            int choose;
-            
             if (message != null)
             {
                 Console.WriteLine(message);
@@ -55,7 +53,7 @@ namespace Shkadun_Bank
 
             while (true)
             {
-                if (int.TryParse(Console.ReadLine(), out choose) && choose >= 0 && choose <= maxValue)
+                if (int.TryParse(Console.ReadLine(), out int choose) && choose >= 0 && choose <= maxValue)
                 {
                     return choose;
                 }
@@ -70,23 +68,24 @@ namespace Shkadun_Bank
         {
             Console.WriteLine(InputValue);
 
-            // Как сделать без объявления не догнал.
-            int sum;
-
-            while (!(int.TryParse(Console.ReadLine(), out sum))) ;
-
-            return sum;
+            while (true)
+            {
+                if(int.TryParse(Console.ReadLine(), out int sum) && sum > 0)
+                {
+                    return sum;
+                }
+                else
+                {
+                    Console.WriteLine(IncorrectInput);
+                }
+            }
         }
 
         public static string InputStringValue(string message)
         {
             Console.WriteLine(message);
 
-            string name;
-
-            while ((name = Console.ReadLine()) == null) ;
-
-            return name;
+            return Console.ReadLine();
         }
     }
 }

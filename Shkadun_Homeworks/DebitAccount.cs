@@ -7,11 +7,10 @@ namespace Shkadun_Bank
     {
         private const int PossibleCountOfCardActions = 3;
 
-        public DebitAccount(TypeCardOrAccount type)
+        public DebitAccount()
         {
             Cards = new List<Card>();
             Id = CustomRandom.CreateNumberAccount();
-            Type = type;
             Money = 0;
         }
 

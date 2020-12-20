@@ -7,15 +7,12 @@ namespace Shkadun_Bank
     {
         private const int PossibleCountOfCreditCardActions = 7;
 
-        public override TypeCardOrAccount Type { get; }
-
         public List<Credit> Credits;
 
         public CreditCard()
         {
             Credits = new List<Credit>();
             Balance = 0;
-            Type = TypeCardOrAccount.Credit;
             CardNumber = CustomRandom.RandomCardNumber();
         }
 
@@ -49,9 +46,13 @@ namespace Shkadun_Bank
                 case 2:
                     string numberAccount = ConsoleProvider.InputStringValue(ConsoleProvider.InputRecepientAccounts);
 
-                    if (numberAccount != ConsoleProvider.IncorrectInput)
+                    if (numberAccount.Length != 0)
                     {
                         TransferMoneyToAccount(numberAccount, ConsoleProvider.InputIntegerValue());
+                    }
+                    else
+                    {
+                        Bank.ShowMessage(ConsoleProvider.IncorrectInput);
                     }
                     break;
 
@@ -103,7 +104,7 @@ namespace Shkadun_Bank
             int chooseCard = ConsoleProvider.ReadChooseAction(Bank.Accounts[chooseAccount].Cards.Count);
             Card card = Bank.Accounts[chooseAccount].Cards[chooseCard];
 
-            if (card.Type == TypeCardOrAccount.Debit)
+            if (card as DebetCard != null)
             {
                 Bank.ShowMessage(ConsoleProvider.IncorrectOperation);
             }

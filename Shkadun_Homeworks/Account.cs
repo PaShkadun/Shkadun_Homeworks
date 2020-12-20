@@ -11,9 +11,7 @@ namespace Shkadun_Bank
 
         public int Money { get; set; }
 
-        virtual public List<Card> Cards { get; set; }
-
-        public TypeCardOrAccount Type { get; protected set; }
+        public virtual List<Card> Cards { get; set; }
 
         abstract public void ShowCards();
 

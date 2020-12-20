@@ -4,12 +4,9 @@
     {
         private const int PossibleCountOfDebitCardActions = 4;
 
-        public override TypeCardOrAccount Type { get; }
-
         public DebetCard()
         {
             Balance = 0;
-            Type = TypeCardOrAccount.Debit;
             CardNumber = CustomRandom.RandomCardNumber();
         }
 
@@ -62,9 +59,13 @@
                 case 1:
                     string numberAccount = ConsoleProvider.InputStringValue(ConsoleProvider.InputRecepientAccounts);
 
-                    if (numberAccount != ConsoleProvider.IncorrectInput)
+                    if (numberAccount.Length != 0)
                     {
                         TransferMoneyToAccount(numberAccount, ConsoleProvider.InputIntegerValue());
+                    }
+                    else
+                    {
+                        Bank.ShowMessage(ConsoleProvider.IncorrectInput);
                     }
                     break;
 

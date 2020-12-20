@@ -1,6 +1,6 @@
 ﻿namespace Shkadun_Bank
 {
-    public enum TypeCardOrAccount
+    enum TypeAccount
     {
         Debit = 0,
         Credit = 1,
