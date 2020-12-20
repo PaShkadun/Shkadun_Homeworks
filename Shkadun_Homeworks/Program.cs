@@ -4,7 +4,6 @@
     {
         public static void Main(string[] args)
         {
-            Bank.CreateTimer();
             Bank.Start();
         }
     }

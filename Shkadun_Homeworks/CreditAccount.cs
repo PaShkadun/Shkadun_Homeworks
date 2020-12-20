@@ -17,14 +17,6 @@ namespace Shkadun_Bank
             Money = 0;
         }
 
-        public void CheckCards()
-        {
-            foreach (CreditCard card in Cards)
-            {
-                card.ChargeCredit();
-            }
-        }
-
         public override void AddNewCard()
         {
             Cards.Add(new CreditCard());
@@ -87,8 +79,8 @@ namespace Shkadun_Bank
             {
                 Bank.ShowMessage(ConsoleProvider.AddCreditInfo);
 
-                int money = ConsoleProvider.InputIntegerValue();
                 int monthes = ConsoleProvider.InputIntegerValue();
+                int money = ConsoleProvider.InputIntegerValue();
 
                 Credits.Add(new Credit(monthes, money));
                 Bank.ShowMessage(ConsoleProvider.SuccessfullyOperation);
@@ -107,14 +99,12 @@ namespace Shkadun_Bank
             }
             else
             {
-                var countCredit = 0;
-
                 foreach (Credit credit in Credits)
                 {
-                    Console.WriteLine($"{countCredit++} {credit.CreditSum}");
+                    Console.WriteLine($"{credit.Id} {credit.CreditSum}");
                 }
 
-                int chooseCredit = ConsoleProvider.ReadChooseAction(countCredit - 1, ConsoleProvider.InputValue);
+                int chooseCredit = ConsoleProvider.ReadChooseAction(Credits.Count - 1, ConsoleProvider.InputValue);
 
                 if (Money < (Credits[chooseCredit].MonthesDebt * Credits[chooseCredit].CreditSum))
                 {

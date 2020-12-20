@@ -16,25 +16,6 @@ namespace Shkadun_Bank
             CardNumber = CustomRandom.RandomCardNumber();
         }
 
-        public void ChargeCredit()
-        {
-            if (Credits.Count != 0)
-            {
-                var numberCredit = 0;
-
-                foreach (Credit credit in Credits)
-                {
-                    if (credit.Monthes != 0)
-                    {
-                        credit.MonthesDebt++;
-                        credit.Monthes--;
-
-                        Bank.ShowMessage(ConsoleProvider.ChargeCredit + credit.CreditSum + ConsoleProvider.ChargeNumberCredit + numberCredit++);
-                    }
-                }
-            }
-        }
-
         public override void ChooseOperation()
         {
             switch (ConsoleProvider.ReadChooseAction(PossibleCountOfCreditCardActions - 1, ConsoleProvider.OperationsCreditCard))
@@ -185,12 +166,10 @@ namespace Shkadun_Bank
                 Bank.ShowMessage(ConsoleProvider.HaveNotCredit);
             }
             else
-            {
-                int countCredit = 0;
-
+            { 
                 foreach (Credit credit in Credits)
                 {
-                    Console.WriteLine($"{countCredit++}. {credit.CreditSum * credit.MonthesDebt}");
+                    Console.WriteLine($"{credit.Id}. {credit.CreditSum * credit.MonthesDebt}");
                 }
             }
         }

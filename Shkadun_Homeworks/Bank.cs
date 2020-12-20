@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Shkadun_Bank
 {
@@ -22,29 +20,6 @@ namespace Shkadun_Bank
             Accounts = new List<Account>();
             Money = StartMoney;
             ShowMessage += ConsoleProvider.ShowMessage;
-        }
-
-        public static void CreateTimer()
-        {
-            Task task = Task.Factory.StartNew(() =>
-            {
-                while (true)
-                {
-                    Thread.Sleep(20000);
-                    CheckAccounts();
-                }
-            });
-        }
-
-        public static void CheckAccounts()
-        {
-            foreach (Account account in Accounts)
-            {
-                if (account as CreditAccount != null)
-                {
-                    ((CreditAccount)account).CheckCards();
-                }
-            }
         }
 
         public static void AddAccount()

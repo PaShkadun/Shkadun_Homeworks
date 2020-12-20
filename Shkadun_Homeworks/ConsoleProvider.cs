@@ -38,6 +38,7 @@ namespace Shkadun_Bank
         public const string InputName = "Input recepient names";
         public const string InputRecepientAccounts = "Input number recepients account";
         public const string HaveCardOnAccount = "Blocking operation. You have card.";
+        public const string CreditCharge = "Credit Charge id = ";
 
         public static void ShowMessage(string message)
         {
