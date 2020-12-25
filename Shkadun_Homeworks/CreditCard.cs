@@ -20,11 +20,11 @@ namespace Shkadun_Bank
         {
             switch (ConsoleProvider.ReadChooseAction(PossibleCountOfCreditCardActions - 1, ConsoleProvider.OperationsCreditCard))
             {
-                case 1:
+                case (int)CreditCardOperation.TransferMoneyToCard:
                     TransferMoneyToCard();
                     break;
 
-                case 2:
+                case (int)CreditCardOperation.TransferMoneyToAccount:
                     string numberAccount = ConsoleProvider.InputStringValue(ConsoleProvider.InputRecepientAccounts);
 
                     if (numberAccount.Length != 0)
@@ -37,11 +37,11 @@ namespace Shkadun_Bank
                     }
                     break;
 
-                case 3:
+                case (int)CreditCardOperation.AddCredit:
                     AddCredit();
                     break;
 
-                case 4:
+                case (int)CreditCardOperation.PayCredit:
                     if (CheckDebtCredits())
                     {
                         Bank.ShowMessage(ConsoleProvider.HaveNotNegativeCredit);
@@ -57,11 +57,11 @@ namespace Shkadun_Bank
                     }
                     break;
 
-                case 5:
+                case (int)CreditCardOperation.ShowAllCredit:
                     ShowAllCredit();
                     break;
 
-                case 6:
+                case (int)CreditCardOperation.SpendMoney:
                     SpendMoney();
                     break;
             }

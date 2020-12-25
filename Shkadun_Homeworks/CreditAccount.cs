@@ -101,7 +101,7 @@ namespace Shkadun_Bank
             {
                 foreach (Credit credit in Credits)
                 {
-                    Console.WriteLine($"{credit.Id} {credit.CreditSum}");
+                    Console.WriteLine($"{credit.Id} {credit.CreditSum * credit.MonthesDebt}");
                 }
 
                 int chooseCredit = ConsoleProvider.ReadChooseAction(Credits.Count - 1, ConsoleProvider.InputValue);
@@ -122,11 +122,11 @@ namespace Shkadun_Bank
         {
             switch (ConsoleProvider.ReadChooseAction(PossibleCountOfCardActions, ConsoleProvider.ActionsCreditAccount))
             {
-                case 1:
+                case (int)CreditAccountOperation.AddNewCard:
                     AddNewCard();
                     break;
 
-                case 2:
+                case (int)CreditAccountOperation.DeleteCard:
                     ShowCards();
 
                     if (Cards.Count != 0)
@@ -136,7 +136,7 @@ namespace Shkadun_Bank
 
                     break;
 
-                case 3:
+                case (int)CreditAccountOperation.ChooseOperation:
                     ShowCards();
 
                     if (Cards.Count != 0)
@@ -146,15 +146,15 @@ namespace Shkadun_Bank
 
                     break;
 
-                case 4:
+                case (int)CreditAccountOperation.AddCashOnCart:
                     AddCashOnCart();
                     break;
 
-                case 5:
+                case (int)CreditAccountOperation.AddCredit:
                     AddCredit();
                     break;
 
-                case 6:
+                case (int)CreditAccountOperation.PayCredit:
                     PayCredit();
                     break;
             }

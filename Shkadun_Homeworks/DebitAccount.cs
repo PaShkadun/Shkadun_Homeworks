@@ -53,11 +53,11 @@ namespace Shkadun_Bank
         {
             switch (ConsoleProvider.ReadChooseAction(PossibleCountOfCardActions, ConsoleProvider.ActionsDebitAccount))
             {
-                case 1:
+                case (int)DebitAccountOperation.AddNewCard:
                     AddNewCard();
                     break;
 
-                case 2:
+                case (int)DebitAccountOperation.DeleteCard:
                     ShowCards();
 
                     if (Cards.Count != 0)
@@ -67,7 +67,7 @@ namespace Shkadun_Bank
 
                     break;
 
-                case 3:
+                case (int)DebitAccountOperation.ChooseOperation:
                     ShowCards();
 
                     if (Cards.Count != 0)
@@ -77,7 +77,7 @@ namespace Shkadun_Bank
 
                     break;
 
-                case 4:
+                case (int)DebitAccountOperation.AddCashOnCart:
                     AddCashOnCart();
                     break;
             }

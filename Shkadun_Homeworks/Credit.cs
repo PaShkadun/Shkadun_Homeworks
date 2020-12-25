@@ -38,7 +38,7 @@ namespace Shkadun_Bank
             {
                 while (Monthes > 0)
                 {
-                    Thread.Sleep(20000);
+                    Thread.Sleep(1000);
                     MonthesDebt++;
                     Monthes--;
 

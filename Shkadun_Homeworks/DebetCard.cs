@@ -56,7 +56,7 @@
 
             switch (ConsoleProvider.ReadChooseAction(PossibleCountOfDebitCardActions))
             {
-                case 1:
+                case (int)DebitCardOperation.TransferMoneyToAccount:
                     string numberAccount = ConsoleProvider.InputStringValue(ConsoleProvider.InputRecepientAccounts);
 
                     if (numberAccount.Length != 0)
@@ -69,11 +69,11 @@
                     }
                     break;
 
-                case 2:
+                case (int)DebitCardOperation.TransferMoneyToCard:
                     TransferMoneyToCard();
                     break;
 
-                case 3: 
+                case (int)DebitCardOperation.SpendMoney: 
                     SpendMoney();
                     break;
             }

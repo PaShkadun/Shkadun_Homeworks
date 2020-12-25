@@ -97,11 +97,11 @@ namespace Shkadun_Bank
 
                 switch (ConsoleProvider.ReadChooseAction(PossibleCountOfBankActions, ConsoleProvider.ActionsBank))
                 {
-                    case 1:
+                    case (int)BankOperation.AddAccount:
                         AddAccount();
                         break;
 
-                    case 2:
+                    case (int)BankOperation.AddCashToAccount:
                         ShowAccounts();
 
                         if (Accounts.Count != 0)
@@ -110,7 +110,7 @@ namespace Shkadun_Bank
                         }
                         break;
 
-                    case 3:
+                    case (int)BankOperation.DeleteAccount:
                         ShowAccounts();
 
                         if (Accounts.Count != 0)
@@ -119,11 +119,11 @@ namespace Shkadun_Bank
                         }
                         break;
 
-                    case 4:
+                    case (int)BankOperation.ShowAccounts:
                         ShowAccounts();
                         break;
 
-                    case 5:
+                    case (int)BankOperation.ManageAccount:
                         ShowAccounts();
 
                         if (Accounts.Count != 0)
@@ -132,16 +132,16 @@ namespace Shkadun_Bank
                         }
                         break;
 
-                    case 6:
+                    case (int)BankOperation.ShowBankBalance:
                         ShowMessage(ConsoleProvider.MessageBalance + Money);
                         break;
 
-                    case 7:
+                    case (int)BankOperation.ShowAccountBalance:
                         ShowAccounts();
                         ShowMessage(ConsoleProvider.MessageBalance + Accounts[ConsoleProvider.ReadChooseAction(Accounts.Count - 1)].Money);
                         break;
 
-                    case 0:
+                    case (int)BankOperation.Exit:
                         over = true;
                         break;
 
