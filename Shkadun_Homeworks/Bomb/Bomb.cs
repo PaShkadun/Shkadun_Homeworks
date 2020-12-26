@@ -26,7 +26,6 @@ namespace Shkadun_Bomb.Bomb
             CountAttempts = 0;
             Code = CustomRandom.GenerationCode(CodeLength);
 
-            Console.WriteLine(Code);
             CreateTimer();
         }
 
