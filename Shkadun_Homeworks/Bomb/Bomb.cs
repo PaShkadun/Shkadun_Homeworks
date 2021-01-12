@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
 namespace Shkadun_Bomb.Bomb
@@ -112,6 +111,8 @@ namespace Shkadun_Bomb.Bomb
                     if (Timer == Time && Game.Status == GameStatus.InGame)
                     {
                         Game.Status = GameStatus.Los;
+
+                        Game.SendMessage(ConsoleProvider.BombExploded);
 
                         return;
                     }
